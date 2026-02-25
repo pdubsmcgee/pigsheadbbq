@@ -24,6 +24,7 @@ BASE_LAYOUT = """<!doctype html>
     <link rel=\"stylesheet\" href=\"styles/main.css\" />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
 {{HEADER}}
 
 {{CONTENT}}
