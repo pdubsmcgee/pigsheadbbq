@@ -38,23 +38,44 @@
     <div class="section-head">
       <p class="kicker">Fan Favorites</p>
       <h2>Smokehouse Menu Highlights</h2>
+      <p>
+        We can pull live pricing and specials from Google Sheets. Publish your sheet to the web as CSV and drop that
+        link into the button below.
+      </p>
+      <p class="menu-links">
+        <a
+          class="button button-outline"
+          href="https://docs.google.com/spreadsheets/u/0/"
+          target="_blank"
+          rel="noreferrer"
+          >Open Menu Google Sheet</a
+        >
+      </p>
     </div>
-    <div class="menu-grid">
+    <div
+      id="menu-template"
+      class="menu-grid"
+      data-menu-sheet="https://docs.google.com/spreadsheets/d/e/YOUR_PUBLISHED_SHEET_ID/pub?output=csv"
+    >
       <article class="card">
-        <h3>Brisket Plate</h3>
-        <p>Slow-smoked brisket with your choice of two rotating sides.</p>
+        <h3>Template: Smoked Meats</h3>
+        <p>Brisket Plate — $18</p>
+        <p>Pulled Pork Sandwich — $12</p>
       </article>
       <article class="card">
-        <h3>Rib Tips</h3>
-        <p>A local favorite with bold bark and rich house sauce.</p>
+        <h3>Template: Signature Plates</h3>
+        <p>Rib Tip Basket — $16</p>
+        <p>Jumbo Garlic Pepper Shrimp — $17</p>
       </article>
       <article class="card">
-        <h3>Jumbo Garlic Pepper Shrimp</h3>
-        <p>A signature special packed with smoke and spice.</p>
+        <h3>Template: Sides</h3>
+        <p>Cheesy Mac — $5</p>
+        <p>Loaded Potato Salad — $5</p>
       </article>
       <article class="card">
-        <h3>Cheesy Mac</h3>
-        <p>Creamy, comforting, and perfect alongside smoked meats.</p>
+        <h3>Template: Family Packs</h3>
+        <p>Feeds 4 — choice of 2 meats + 3 sides</p>
+        <p>Feeds 8 — choice of 3 meats + 4 sides</p>
       </article>
     </div>
   </section>
@@ -68,9 +89,10 @@
           Build your event menu with smoked meats, rotating sides, and crowd-sized portions. We’ll help you plan a
           spread your guests talk about long after the event.
         </p>
-        <a class="button button-secondary" href="pigs_head_catering_menu.pdf" download="pigs-head-catering-menu.pdf"
+        <a class="button button-secondary" href="./pigs_head_catering_menu.pdf" target="_blank" rel="noreferrer"
           >Download Catering Menu</a
         >
+        <p class="download-help">If download doesn’t start, the PDF opens in a new tab for easy saving.</p>
       </div>
       <img src="photo_grid.png" alt="Grid of Pigs Head BBQ food photos" />
     </div>
@@ -85,6 +107,17 @@
       </p>
     </div>
     <div class="facebook-embed card">
+      <iframe
+        title="Pigs Head BBQ Facebook feed"
+        src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FTHEPIGSHEADBBQ&tabs=timeline&width=500&height=680&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
+        width="500"
+        height="680"
+        style="border:none;overflow:hidden"
+        scrolling="no"
+        frameborder="0"
+        allowfullscreen="true"
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      ></iframe>
       <p class="facebook-note">
         <a href="https://www.facebook.com/THEPIGSHEADBBQ" target="_blank" rel="noreferrer">Open Pigs Head BBQ on Facebook</a>
       </p>

@@ -244,6 +244,17 @@ h2 {
   margin-bottom: 1.25rem;
 }
 
+
+.menu-links {
+  margin: 0.8rem 0 0;
+}
+
+.download-help {
+  color: var(--muted);
+  margin: 0.65rem 0 0;
+  font-size: 0.95rem;
+}
+
 .menu-grid,
 .review-grid {
   display: grid;
