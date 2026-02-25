@@ -16,6 +16,22 @@ You can optionally pass a URL (useful for debugging):
 bash scripts/mirror-site.sh https://pigsheadbbq.com/
 ```
 
+## Git LFS setup
+
+Binary assets in `site/pigsheadbbq.com` are tracked with Git LFS (`.png`, `.jpg`, `.pdf`, and font binaries).
+
+Run this once after cloning:
+
+```bash
+git lfs install
+```
+
+Then pull LFS objects if needed:
+
+```bash
+git lfs pull
+```
+
 ## Notes
 
 - The mirror script now tries twice: first with your current proxy settings, then a direct `--no-proxy` retry.
