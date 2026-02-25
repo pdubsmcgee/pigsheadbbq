@@ -37,3 +37,24 @@ git lfs pull
 - The mirror script now tries twice: first with your current proxy settings, then a direct `--no-proxy` retry.
 - Some hosted environments still block this domain from both routes; if so, run the script from a machine with open outbound access and commit the downloaded `site/` directory.
 - After cloning, open `site/pigsheadbbq.com/index.html` in a browser or serve it with a simple static file server.
+
+
+## Shared header/footer workflow
+
+`site/pigsheadbbq.com/index.html` and `site/pigsheadbbq.com/about.html` are generated files.
+
+- Shared chrome lives in:
+  - `site/pigsheadbbq.com/templates/header.html`
+  - `site/pigsheadbbq.com/templates/footer.html`
+- Page-specific body content lives in:
+  - `site/pigsheadbbq.com/templates/index.content.html`
+  - `site/pigsheadbbq.com/templates/about.content.html`
+- Per-page nav differences (hash links vs `index.html#...`, `aria-current`) are defined in `scripts/build-site.py` via small `header_vars` overrides.
+
+After editing any template, regenerate both pages:
+
+```bash
+python3 scripts/build-site.py
+```
+
+Commit template + generated HTML changes together to keep pages from diverging.
