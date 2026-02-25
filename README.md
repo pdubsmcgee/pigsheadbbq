@@ -38,6 +38,49 @@ git lfs pull
 - Some hosted environments still block this domain from both routes; if so, run the script from a machine with open outbound access and commit the downloaded `site/` directory.
 - After cloning, open `site/pigsheadbbq.com/index.html` in a browser or serve it with a simple static file server.
 
+## Authenticated server (protect all site routes)
+
+The repository now includes `server/app.py`, a lightweight Flask app that puts an authentication layer in front of all mirrored pages and assets under `site/pigsheadbbq.com`.
+
+### Behavior
+
+- Unauthenticated requests are redirected to `/login`.
+- Only `/login` and `/logout` are publicly accessible.
+- Successful login creates a **server-side session** entry keyed by a random session ID.
+- The browser cookie stores only the session ID (`phbq_session`), not auth state.
+- `/logout` clears the session and cookie.
+
+### Local run
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install flask gunicorn
+
+export APP_USERNAME='admin'
+export APP_PASSWORD='replace-with-a-strong-password'
+# For local HTTP testing, keep this false.
+export SESSION_COOKIE_SECURE='false'
+
+python3 server/app.py
+```
+
+Visit <http://127.0.0.1:8000>. You should be redirected to `/login` before any site page is served.
+
+### Production entrypoint
+
+Use Gunicorn (or another WSGI server) and set secure cookie behavior:
+
+```bash
+export APP_USERNAME='admin'
+export APP_PASSWORD='replace-with-a-strong-password'
+export SESSION_COOKIE_SECURE='true'
+
+gunicorn --bind 0.0.0.0:8000 server.app:app
+```
+
+If running behind a reverse proxy/ingress, terminate TLS before requests reach this app so secure cookies are respected by browsers.
+
 ## Shared header/footer workflow
 
 `site/pigsheadbbq.com/index.html` and `site/pigsheadbbq.com/about.html` are generated files.
