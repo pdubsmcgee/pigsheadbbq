@@ -55,10 +55,11 @@ The repository now includes `server/app.py`, a lightweight Flask app that puts a
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install flask gunicorn
+pip install -r server/requirements.txt
 
-export APP_USERNAME='admin'
-export APP_PASSWORD='replace-with-a-strong-password'
+export ADMIN_USERNAME='admin'
+export ADMIN_PASSWORD_HASH='$argon2id$v=19$m=65536,t=3,p=4$...'
+export SESSION_SECRET='replace-with-a-long-random-secret'
 # For local HTTP testing, keep this false.
 export SESSION_COOKIE_SECURE='false'
 
@@ -72,14 +73,54 @@ Visit <http://127.0.0.1:8000>. You should be redirected to `/login` before any s
 Use Gunicorn (or another WSGI server) and set secure cookie behavior:
 
 ```bash
-export APP_USERNAME='admin'
-export APP_PASSWORD='replace-with-a-strong-password'
+export ADMIN_USERNAME='admin'
+export ADMIN_PASSWORD_HASH='$argon2id$v=19$m=65536,t=3,p=4$...'
+export SESSION_SECRET='replace-with-a-long-random-secret'
 export SESSION_COOKIE_SECURE='true'
 
 gunicorn --bind 0.0.0.0:8000 server.app:app
 ```
 
 If running behind a reverse proxy/ingress, terminate TLS before requests reach this app so secure cookies are respected by browsers.
+
+## Security configuration
+
+The login gateway now expects secure, environment-only auth configuration and includes CSRF + brute-force protection:
+
+- `ADMIN_USERNAME`: admin username to allow.
+- `ADMIN_PASSWORD_HASH`: password hash value generated with Argon2id.
+- `SESSION_SECRET`: Flask secret key used for CSRF token signing.
+- `SESSION_COOKIE_SECURE`: defaults to secure cookies (`true`); set `false` only for local non-TLS testing.
+
+### Generate a password hash (do not store plaintext)
+
+Use Python/argon2-cffi to generate an Argon2id hash from a plaintext password:
+
+```bash
+python3 - <<'PY'
+from argon2 import PasswordHasher
+print(PasswordHasher().hash("REPLACE_WITH_STRONG_PASSWORD"))
+PY
+```
+
+Copy the output into `ADMIN_PASSWORD_HASH`.
+
+### Generate a strong session secret
+
+Use Python to generate a 64-byte URL-safe random secret:
+
+```bash
+python3 - <<'PY'
+import secrets
+print(secrets.token_urlsafe(64))
+PY
+```
+
+### Rotation guidance
+
+- **Password rotation**: generate a new password hash and deploy with updated `ADMIN_PASSWORD_HASH`.
+- **Session secret rotation**: deploy a new `SESSION_SECRET`; existing sessions and CSRF tokens will be invalidated (users must re-login).
+- Rotate these values through your secret manager or deployment environment variables, never by committing values to git.
 
 ## Shared header/footer workflow
 
