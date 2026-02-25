@@ -248,6 +248,55 @@ h2 {
   min-height: calc(100vh - 190px);
 }
 
+
+
+.about-story {
+  max-width: 860px;
+}
+
+.about-story p {
+  color: var(--muted);
+}
+
+.about-story .basic-image {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.about-story .outro {
+  color: var(--accent-2);
+  font-weight: 800;
+}
+
+.facebook-feed {
+  padding: 1rem 0 4rem;
+}
+
+.facebook-feed .section-head p {
+  max-width: 72ch;
+}
+
+.facebook-embed {
+  display: grid;
+  justify-items: center;
+  gap: 0.8rem;
+}
+
+.facebook-embed iframe {
+  width: min(100%, 500px);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.facebook-note {
+  margin: 0;
+  text-align: center;
+}
+
+.facebook-note a {
+  color: var(--accent-2);
+}
+
 @media (max-width: 940px) {
   .menu-grid,
   .review-grid {
