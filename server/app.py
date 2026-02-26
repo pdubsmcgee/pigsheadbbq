@@ -1,18 +1,24 @@
 from __future__ import annotations
 
-import hmac
 import os
 import secrets
 import time
+from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlencode
 
 from flask import Flask, Response, redirect, render_template_string, request, send_from_directory
+from flask_wtf.csrf import CSRFProtect, generate_csrf
+from argon2 import PasswordHasher
+from argon2.exceptions import InvalidHash, VerifyMismatchError
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 SITE_DIR = BASE_DIR / "site" / "pigsheadbbq.com"
 SESSION_COOKIE_NAME = "phbq_session"
+RATE_LIMIT_WINDOW_SECONDS = 15 * 60
+RATE_LIMIT_MAX_ATTEMPTS = 8
+PASSWORD_HASHER = PasswordHasher()
 
 
 @dataclass
@@ -21,10 +27,23 @@ class SessionData:
     created_at: float
 
 
+def _required_env(name: str) -> str:
+    value = os.environ.get(name)
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
+
+
 app = Flask(__name__)
+app.config["ADMIN_USERNAME"] = _required_env("ADMIN_USERNAME")
+app.config["ADMIN_PASSWORD_HASH"] = _required_env("ADMIN_PASSWORD_HASH")
+app.config["SECRET_KEY"] = _required_env("SESSION_SECRET")
+csrf = CSRFProtect(app)
 
 # In-memory server-side session storage: cookie only stores a random session identifier.
 SESSION_STORE: dict[str, SessionData] = {}
+FAILED_LOGINS_BY_IP: dict[str, deque[float]] = defaultdict(deque)
+FAILED_LOGINS_BY_USERNAME: dict[str, deque[float]] = defaultdict(deque)
 
 LOGIN_TEMPLATE = """<!doctype html>
 <html lang=\"en\">
@@ -94,6 +113,7 @@ LOGIN_TEMPLATE = """<!doctype html>
       <p>Sign in to access the protected site.</p>
       {% if error %}<p class=\"error\">{{ error }}</p>{% endif %}
       <form method=\"post\" action=\"/login\">
+        <input type=\"hidden\" name=\"csrf_token\" value=\"{{ csrf_token }}\" />
         <input type=\"hidden\" name=\"next\" value=\"{{ next_path }}\" />
         <label for=\"username\">Username</label>
         <input id=\"username\" name=\"username\" required autocomplete=\"username\" />
@@ -120,9 +140,38 @@ def _is_safe_next_path(next_path: str | None) -> bool:
 
 
 def _credential_is_valid(username: str, password: str) -> bool:
-    expected_user = "admin"
-    expected_password = "Troglives1!"
-    return hmac.compare_digest(username, expected_user) and hmac.compare_digest(password, expected_password)
+    expected_user = app.config["ADMIN_USERNAME"]
+    expected_password_hash = app.config["ADMIN_PASSWORD_HASH"]
+    if username != expected_user:
+        return False
+    try:
+        return PASSWORD_HASHER.verify(expected_password_hash, password)
+    except (InvalidHash, VerifyMismatchError):
+        return False
+
+
+def _prune_attempts(attempts: deque[float], now: float) -> None:
+    cutoff = now - RATE_LIMIT_WINDOW_SECONDS
+    while attempts and attempts[0] < cutoff:
+        attempts.popleft()
+
+
+def _is_rate_limited(ip_address: str, username: str, now: float) -> bool:
+    ip_attempts = FAILED_LOGINS_BY_IP[ip_address]
+    username_attempts = FAILED_LOGINS_BY_USERNAME[username]
+    _prune_attempts(ip_attempts, now)
+    _prune_attempts(username_attempts, now)
+    return len(ip_attempts) >= RATE_LIMIT_MAX_ATTEMPTS or len(username_attempts) >= RATE_LIMIT_MAX_ATTEMPTS
+
+
+def _record_failed_login(ip_address: str, username: str, now: float) -> None:
+    FAILED_LOGINS_BY_IP[ip_address].append(now)
+    FAILED_LOGINS_BY_USERNAME[username].append(now)
+
+
+def _clear_failed_logins(ip_address: str, username: str) -> None:
+    FAILED_LOGINS_BY_IP.pop(ip_address, None)
+    FAILED_LOGINS_BY_USERNAME.pop(username, None)
 
 
 def _new_session(username: str) -> str:
@@ -169,7 +218,7 @@ def login_form() -> str:
     next_path = request.args.get("next", "/")
     if not _is_safe_next_path(next_path):
         next_path = "/"
-    return render_template_string(LOGIN_TEMPLATE, error=None, next_path=next_path)
+    return render_template_string(LOGIN_TEMPLATE, error=None, next_path=next_path, csrf_token=generate_csrf())
 
 
 @app.post("/login")
@@ -177,19 +226,42 @@ def login_submit() -> Response:
     username = request.form.get("username", "")
     password = request.form.get("password", "")
     next_path = request.form.get("next", "/")
+    ip_address = request.headers.get("X-Forwarded-For", request.remote_addr or "unknown").split(",", maxsplit=1)[0].strip()
+    now = time.time()
     if not _is_safe_next_path(next_path):
         next_path = "/"
 
-    if not _credential_is_valid(username, password):
-        return Response(render_template_string(LOGIN_TEMPLATE, error="Invalid username or password.", next_path=next_path), status=401)
+    if _is_rate_limited(ip_address, username, now):
+        return Response(
+            render_template_string(
+                LOGIN_TEMPLATE,
+                error="Too many failed login attempts. Please wait and try again.",
+                next_path=next_path,
+                csrf_token=generate_csrf(),
+            ),
+            status=429,
+        )
 
+    if not _credential_is_valid(username, password):
+        _record_failed_login(ip_address, username, now)
+        return Response(
+            render_template_string(
+                LOGIN_TEMPLATE,
+                error="Invalid username or password.",
+                next_path=next_path,
+                csrf_token=generate_csrf(),
+            ),
+            status=401,
+        )
+
+    _clear_failed_logins(ip_address, username)
     session_id = _new_session(username)
     response = redirect(next_path)
     response.set_cookie(
         SESSION_COOKIE_NAME,
         session_id,
         httponly=True,
-        secure=_is_truthy(os.environ.get("SESSION_COOKIE_SECURE"), default=False),
+        secure=_is_truthy(os.environ.get("SESSION_COOKIE_SECURE"), default=True),
         samesite="Lax",
         max_age=60 * 60 * 8,
     )
