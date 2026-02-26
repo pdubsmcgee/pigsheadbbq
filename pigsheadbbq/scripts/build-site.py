@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
+import os
+import re
 from pathlib import Path
+from urllib.parse import parse_qs, urlparse
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = ROOT / "site" / "pigsheadbbq.com"
@@ -70,6 +73,49 @@ PAGES = {
     },
 }
 
+DEFAULT_MENU_SHEET_URL = (
+    "https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/edit?usp=drivesdk"
+)
+
+
+def _sheet_id_from_url(url: str) -> str | None:
+    sheet_id_match = re.match(r"^https://docs\.google\.com/spreadsheets/d/([a-zA-Z0-9-_]+)(?:/.+)?$", url, re.IGNORECASE)
+    if sheet_id_match:
+        return sheet_id_match.group(1)
+    return None
+
+
+def _published_gid_from_url(url: str) -> str | None:
+    parsed = urlparse(url)
+    query = parse_qs(parsed.query)
+    return query.get("gid", [None])[0]
+
+
+def _sheet_display_links(sheet_url: str, sheet_gid: str | None = None) -> dict[str, str]:
+    sheet_url = sheet_url.strip()
+    sheet_id = _sheet_id_from_url(sheet_url)
+    gid = (sheet_gid or "").strip() or None
+    if not gid:
+        gid = _published_gid_from_url(sheet_url)
+
+    if not sheet_id:
+        return {
+            "pdf": sheet_url,
+            "sheet": sheet_url,
+            "csv": sheet_url,
+            "embed": sheet_url,
+        }
+
+    gid_query = f"&gid={gid}" if gid else ""
+    gid_path = f"/edit#gid={gid}" if gid else "/edit"
+    base = f"https://docs.google.com/spreadsheets/d/{sheet_id}"
+    return {
+        "pdf": f"{base}/export?format=pdf{gid_query}",
+        "sheet": f"{base}{gid_path}",
+        "csv": f"{base}/export?format=csv{gid_query}",
+        "embed": f"{base}/preview",
+    }
+
 
 def render(template: str, values: dict[str, str]) -> str:
     output = template
@@ -82,9 +128,29 @@ def main() -> None:
     header_template = (TEMPLATES / "header.html").read_text()
     footer_template = (TEMPLATES / "footer.html").read_text()
 
+    menu_links = _sheet_display_links(
+        os.environ.get("MENU_SHEET_URL", DEFAULT_MENU_SHEET_URL),
+        sheet_gid=os.environ.get("MENU_SHEET_GID"),
+    )
+    catering_links = _sheet_display_links(
+        os.environ.get("CATERING_SHEET_URL", os.environ.get("MENU_SHEET_URL", DEFAULT_MENU_SHEET_URL)),
+        sheet_gid=os.environ.get("CATERING_SHEET_GID"),
+    )
+
     for filename, page in PAGES.items():
-        header = render(header_template, page["header_vars"])
-        content = (TEMPLATES / page["content"]).read_text()
+        page_vars = {
+            **page["header_vars"],
+            "MENU_HREF": menu_links["pdf"],
+            "CATERING_HREF": catering_links["pdf"],
+            "MENU_SHEET_HREF": menu_links["sheet"],
+            "MENU_CSV_HREF": menu_links["csv"],
+            "MENU_EMBED_HREF": menu_links["embed"],
+            "CATERING_SHEET_HREF": catering_links["sheet"],
+            "CATERING_CSV_HREF": catering_links["csv"],
+            "CATERING_EMBED_HREF": catering_links["embed"],
+        }
+        header = render(header_template, page_vars)
+        content = render((TEMPLATES / page["content"]).read_text(), page_vars)
 
         html = render(
             BASE_LAYOUT,
