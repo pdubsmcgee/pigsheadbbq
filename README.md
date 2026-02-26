@@ -32,6 +32,33 @@ Then pull LFS objects if needed:
 git lfs pull
 ```
 
+
+## Netlify deploy checkout error (refs/heads/main)
+
+If Netlify fails during **Preparing Git Reference refs/heads/main** with:
+
+- `Error checking out to refs/heads/main`
+- `Failed to prepare repo`
+
+that means Netlify is configured to deploy a branch named `main`, but that branch is not available to Netlify for checkout.
+
+### Fix options
+
+1. Confirm your branch names on GitHub.
+2. If needed, create and push `main`:
+
+```bash
+git checkout -b main
+git push -u origin main
+```
+
+3. If your production branch is different (for example `master`), update Netlify:
+   - **Site settings → Build & deploy → Continuous Deployment → Branch to deploy**
+4. If the branch exists and still fails, reconnect the repository in Netlify to refresh permissions:
+   - **Site settings → Build & deploy → Repository → Edit settings → Reconnect repository**
+
+Because this failure happens in repo checkout, build command changes are usually unnecessary until checkout succeeds.
+
 ## Notes
 
 - The mirror script now tries twice: first with your current proxy settings, then a direct `--no-proxy` retry.
