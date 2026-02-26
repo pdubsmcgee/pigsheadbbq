@@ -1,9 +1,6 @@
-# Root Photo Upload Folder
+# Repo Photo Uploads
 
-Place original photos here for future website updates.
+Drop original photo files in this folder for future site updates.
 
-- Recommended formats: `.jpg`, `.jpeg`, `.png`, `.webp`
-- Use descriptive filenames (example: `loaded-brisket-fries-2026-02.jpg`)
-- Keep highest quality originals when possible
-
-Files in this folder are source assets only and will not appear on the live site until they are added to templates/pages.
+- This directory is for repository storage only.
+- Files here are **not** linked in site templates by default.

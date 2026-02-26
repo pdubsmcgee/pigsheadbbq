@@ -167,4 +167,133 @@
     <div id="uploaded-photo-gallery" class="uploaded-photo-gallery" aria-live="polite"></div>
   </section>
 
+  <section class="quick-info container">
+    <article>
+      <h2>Hours</h2>
+      <p>Hours vary — please check Facebook or the live widget below for today’s hours.</p>
+    </article>
+    <article>
+      <h2>Current Location</h2>
+      <p>
+        Food truck moves often — <a href="https://www.facebook.com/THEPIGSHEADBBQ" target="_blank" rel="noreferrer"
+          >check Facebook for today’s stop</a
+        >.
+      </p>
+    </article>
+    <article>
+      <h2>Book Catering</h2>
+      <p>Corporate lunches, weddings, private parties</p>
+    </article>
+  </section>
+
+  <section id="menu" class="menu container">
+    <div class="section-head">
+      <p class="kicker">Fan Favorites</p>
+      <h2>Smokehouse Menu Highlights</h2>
+      <p>
+        We can pull live pricing and specials from Google Sheets. Publish your sheet to the web as CSV and drop that
+        link into the button below.
+      </p>
+      <p class="menu-links">
+        <a
+          class="button button-outline"
+          href="https://docs.google.com/spreadsheets/u/0/"
+          target="_blank"
+          rel="noreferrer"
+          >Open Menu Google Sheet</a
+        >
+      </p>
+    </div>
+    <div
+      id="menu-template"
+      class="menu-grid"
+      data-menu-sheet="https://docs.google.com/spreadsheets/d/e/YOUR_PUBLISHED_SHEET_ID/pub?output=csv"
+    >
+      <article class="card">
+        <h3>Template: Smoked Meats</h3>
+        <p>Brisket Plate — $18</p>
+        <p>Pulled Pork Sandwich — $12</p>
+      </article>
+      <article class="card">
+        <h3>Template: Signature Plates</h3>
+        <p>Rib Tip Basket — $16</p>
+        <p>Jumbo Garlic Pepper Shrimp — $17</p>
+      </article>
+      <article class="card">
+        <h3>Template: Sides</h3>
+        <p>Cheesy Mac — $5</p>
+        <p>Loaded Potato Salad — $5</p>
+      </article>
+      <article class="card">
+        <h3>Template: Family Packs</h3>
+        <p>Feeds 4 — choice of 2 meats + 3 sides</p>
+        <p>Feeds 8 — choice of 3 meats + 4 sides</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="catering" class="catering">
+    <div class="container catering-wrap">
+      <div>
+        <p class="kicker">Need to feed a crowd?</p>
+        <h2>Catering Made Easy</h2>
+        <p>
+          Build your event menu with smoked meats, rotating sides, and crowd-sized portions. We’ll help you plan a
+          spread your guests talk about long after the event.
+        </p>
+        <a class="button button-secondary" href="./pigs_head_catering_menu.pdf" target="_blank" rel="noreferrer"
+          >Download Catering Menu</a
+        >
+        <p class="download-help">If download doesn’t start, the PDF opens in a new tab for easy saving.</p>
+      </div>
+      <img src="photo_grid.png" alt="Grid of Pigs Head BBQ food photos" />
+    </div>
+  </section>
+
+  <section id="facebook" class="facebook-feed container">
+    <div class="section-head">
+      <p class="kicker">Live Updates</p>
+      <h2>Follow Along on Facebook</h2>
+      <p>
+        For the fastest truck location updates and daily posts, visit our official Facebook page.
+      </p>
+    </div>
+    <div class="facebook-embed card">
+      <iframe
+        title="Pigs Head BBQ Facebook feed"
+        src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FTHEPIGSHEADBBQ&tabs=timeline&width=500&height=680&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
+        width="500"
+        height="680"
+        style="border:none;overflow:hidden"
+        scrolling="no"
+        frameborder="0"
+        allowfullscreen="true"
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      ></iframe>
+      <p class="facebook-note">
+        <a href="https://www.facebook.com/THEPIGSHEADBBQ" target="_blank" rel="noreferrer">Open Pigs Head BBQ on Facebook</a>
+      </p>
+    </div>
+  </section>
+
+  <section id="reviews" class="reviews container">
+    <div class="section-head">
+      <p class="kicker">Community Love</p>
+      <h2>What Guests Are Saying</h2>
+    </div>
+    <div class="review-grid">
+      <blockquote class="card">
+        <p>“Best BBQ in Michigan! Worth the wait in the cold.”</p>
+        <cite>— Amy Thackston</cite>
+      </blockquote>
+      <blockquote class="card">
+        <p>“Brisket just melts in your mouth. The sauces are incredible.”</p>
+        <cite>— Anna Smith</cite>
+      </blockquote>
+      <blockquote class="card">
+        <p>“Fast service, huge flavor, and consistently great food.”</p>
+        <cite>— Local Customer</cite>
+      </blockquote>
+    </div>
+  </section>
 </main>
