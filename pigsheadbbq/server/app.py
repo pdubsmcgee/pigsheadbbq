@@ -3,15 +3,23 @@ from __future__ import annotations
 import os
 import secrets
 import time
+from io import BytesIO, StringIO
 from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
+import csv
+from urllib.request import urlopen
 from urllib.parse import urlencode
+import re
 
 from flask import Flask, Response, redirect, render_template_string, request, send_from_directory
 from flask_wtf.csrf import CSRFProtect, generate_csrf
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHash, VerifyMismatchError
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 SITE_DIR = BASE_DIR / "site" / "pigsheadbbq.com"
@@ -19,12 +27,23 @@ SESSION_COOKIE_NAME = "phbq_session"
 RATE_LIMIT_WINDOW_SECONDS = 15 * 60
 RATE_LIMIT_MAX_ATTEMPTS = 8
 PASSWORD_HASHER = PasswordHasher()
+DEFAULT_MENU_SHEET_URL = (
+    "https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/edit?usp=drivesdk"
+)
 
 
 @dataclass
 class SessionData:
     username: str
     created_at: float
+
+
+@dataclass
+class MenuItem:
+    category: str
+    item: str
+    description: str
+    price: str
 
 
 def _required_env(name: str) -> str:
@@ -195,6 +214,118 @@ def _authenticated_username() -> str | None:
     return session_data.username
 
 
+
+
+def _to_csv_export_url(url: str) -> str:
+    published_pattern = r"^https://docs\.google\.com/spreadsheets/d/e/.+/pub\?output=csv(?:&.*)?$"
+    if re.match(published_pattern, url, re.IGNORECASE):
+        return url
+
+    sheet_id_match = re.match(r"^https://docs\.google\.com/spreadsheets/d/([a-zA-Z0-9-_]+)(?:/.+)?$", url, re.IGNORECASE)
+    if not sheet_id_match:
+        return url
+
+    sheet_id = sheet_id_match.group(1)
+    return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+
+def _download_menu_items() -> list[MenuItem]:
+    menu_sheet_url = os.environ.get("MENU_SHEET_URL", DEFAULT_MENU_SHEET_URL)
+    csv_export_url = _to_csv_export_url(menu_sheet_url)
+    with urlopen(csv_export_url, timeout=10) as response:
+        csv_text = response.read().decode("utf-8")
+
+    csv_reader = csv.DictReader(StringIO(csv_text))
+    menu_items: list[MenuItem] = []
+    for row in csv_reader:
+        category = (row.get("category") or "Menu").strip() or "Menu"
+        item_name = (row.get("item") or "").strip()
+        if not item_name:
+            continue
+        menu_items.append(
+            MenuItem(
+                category=category,
+                item=item_name,
+                description=(row.get("description") or "").strip(),
+                price=(row.get("price") or "").strip(),
+            )
+        )
+
+    return menu_items
+
+
+def _build_menu_pdf(menu_items: list[MenuItem]) -> bytes:
+    buffer = BytesIO()
+    document = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        leftMargin=48,
+        rightMargin=48,
+        topMargin=48,
+        bottomMargin=48,
+        title="Pigs Head BBQ Menu",
+    )
+    styles = getSampleStyleSheet()
+    title_style = styles["Title"]
+    title_style.textColor = colors.HexColor("#7A1D00")
+    subtitle_style = ParagraphStyle(
+        "MenuSubtitle",
+        parent=styles["BodyText"],
+        fontSize=11,
+        textColor=colors.HexColor("#555555"),
+        leading=15,
+    )
+    category_style = ParagraphStyle(
+        "MenuCategory",
+        parent=styles["Heading2"],
+        textColor=colors.HexColor("#7A1D00"),
+        spaceBefore=10,
+        spaceAfter=4,
+    )
+
+    story = [
+        Paragraph("Pigs Head BBQ", title_style),
+        Paragraph("Smokehouse Menu", styles["Heading3"]),
+        Paragraph("Freshly generated from our internal menu sheet.", subtitle_style),
+        Spacer(1, 14),
+    ]
+
+    categories: dict[str, list[MenuItem]] = defaultdict(list)
+    for menu_item in menu_items:
+        categories[menu_item.category].append(menu_item)
+
+    for category_name in sorted(categories.keys()):
+        story.append(Paragraph(category_name, category_style))
+        category_rows = [["Item", "Description", "Price"]]
+        for category_item in categories[category_name]:
+            category_rows.append([category_item.item, category_item.description or "—", category_item.price or "—"])
+
+        table = Table(category_rows, colWidths=[155, 280, 70], hAlign="LEFT")
+        table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1F2937")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 10),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#D1D5DB")),
+                    ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.HexColor("#FFFFFF"), colors.HexColor("#F9FAFB")]),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 8),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+                    ("TOPPADDING", (0, 0), (-1, -1), 6),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                ]
+            )
+        )
+        story.append(table)
+        story.append(Spacer(1, 8))
+
+    document.build(story)
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+    return pdf_bytes
+
+
 @app.before_request
 def require_authentication() -> Response | None:
     path = request.path
@@ -280,6 +411,22 @@ def logout() -> Response:
 @app.get("/")
 def index() -> Response:
     return send_from_directory(SITE_DIR, "index.html")
+
+
+@app.get("/menu.pdf")
+def menu_pdf() -> Response:
+    try:
+        menu_items = _download_menu_items()
+        if not menu_items:
+            return Response("Menu data is currently unavailable.", status=503)
+        pdf_bytes = _build_menu_pdf(menu_items)
+    except Exception:
+        return Response("Unable to generate menu PDF right now.", status=503)
+
+    response = Response(pdf_bytes, mimetype="application/pdf")
+    response.headers["Content-Disposition"] = 'inline; filename="pigs-head-bbq-menu.pdf"'
+    response.headers["Cache-Control"] = "public, max-age=300"
+    return response
 
 
 @app.get("/<path:filename>")
