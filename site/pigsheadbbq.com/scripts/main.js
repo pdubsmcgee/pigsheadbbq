@@ -94,20 +94,49 @@ const hydrateMenuFromGoogleSheet = async () => {
       });
     });
 
-    const cards = [...grouped.entries()].slice(0, 8).map(([category, categoryItems]) => {
-      const list = categoryItems
-        .slice(0, 6)
-        .map(({ item, description, price }) => {
-          const details = [description, price].filter(Boolean).join(' • ');
-          return `<p><strong>${item}</strong>${details ? ` — ${details}` : ''}</p>`;
-        })
-        .join('');
-
-      return `<article class="card"><h3>${category}</h3>${list}</article>`;
-    });
+    const cards = [...grouped.entries()].slice(0, 8);
 
     if (cards.length > 0) {
-      menuTemplate.innerHTML = cards.join('');
+      const fragment = document.createDocumentFragment();
+
+      cards.forEach(([category, categoryItems]) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+
+        const categoryHeading = document.createElement('h3');
+        categoryHeading.textContent = category;
+        card.appendChild(categoryHeading);
+
+        categoryItems.slice(0, 6).forEach(({ item, description, price }) => {
+          const paragraph = document.createElement('p');
+          const itemName = document.createElement('strong');
+          itemName.textContent = item;
+          paragraph.appendChild(itemName);
+
+          const descriptionText = document.createElement('span');
+          descriptionText.textContent = description;
+          const priceText = document.createElement('span');
+          priceText.textContent = price;
+
+          const detailNodes = [descriptionText, priceText].filter((node) => node.textContent);
+          if (detailNodes.length > 0) {
+            paragraph.appendChild(document.createTextNode(' — '));
+            detailNodes.forEach((node, index) => {
+              if (index > 0) {
+                paragraph.appendChild(document.createTextNode(' • '));
+              }
+              paragraph.appendChild(node);
+            });
+          }
+
+          card.appendChild(paragraph);
+        });
+
+        fragment.appendChild(card);
+      });
+
+      menuTemplate.replaceChildren();
+      menuTemplate.appendChild(fragment);
     }
   } catch {
     // Keep fallback template cards if Google Sheets fetch fails.
