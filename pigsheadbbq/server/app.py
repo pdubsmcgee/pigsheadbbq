@@ -256,7 +256,7 @@ def _download_menu_items(sheet_url: str, sheet_gid: str | None = None) -> list[M
     return menu_items
 
 
-def _build_menu_pdf(menu_items: list[MenuItem]) -> bytes:
+def _build_menu_pdf(menu_items: list[MenuItem], menu_title: str) -> bytes:
     buffer = BytesIO()
     document = SimpleDocTemplate(
         buffer,
@@ -265,7 +265,7 @@ def _build_menu_pdf(menu_items: list[MenuItem]) -> bytes:
         rightMargin=48,
         topMargin=48,
         bottomMargin=48,
-        title="Pigs Head BBQ Menu",
+        title=f"Pigs Head BBQ {menu_title}",
     )
     styles = getSampleStyleSheet()
     title_style = styles["Title"]
@@ -287,8 +287,8 @@ def _build_menu_pdf(menu_items: list[MenuItem]) -> bytes:
 
     story = [
         Paragraph("Pigs Head BBQ", title_style),
-        Paragraph("Smokehouse Menu", styles["Heading3"]),
-        Paragraph("Freshly generated from our internal menu sheet.", subtitle_style),
+        Paragraph(menu_title, styles["Heading3"]),
+        Paragraph("Freshly generated from our Google menu sheet.", subtitle_style),
         Spacer(1, 14),
     ]
 
@@ -425,7 +425,7 @@ def menu_pdf() -> Response:
         )
         if not menu_items:
             return Response("Menu data is currently unavailable.", status=503)
-        pdf_bytes = _build_menu_pdf(menu_items)
+        pdf_bytes = _build_menu_pdf(menu_items, menu_title="Weekly Menu")
     except Exception:
         return Response("Unable to generate menu PDF right now.", status=503)
 
@@ -444,7 +444,7 @@ def catering_menu_pdf() -> Response:
         )
         if not menu_items:
             return Response("Catering menu data is currently unavailable.", status=503)
-        pdf_bytes = _build_menu_pdf(menu_items)
+        pdf_bytes = _build_menu_pdf(menu_items, menu_title="Catering Menu")
     except Exception:
         return Response("Unable to generate catering menu PDF right now.", status=503)
 
