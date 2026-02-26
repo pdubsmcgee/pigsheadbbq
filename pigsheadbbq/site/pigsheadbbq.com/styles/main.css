@@ -220,66 +220,26 @@ h2 {
 }
 
 
-.photo-uploads {
+.photo-gallery {
   padding: 4rem 0 1rem;
 }
 
-.photo-uploads code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.1rem 0.35rem;
-}
-
-.upload-panel {
+.photo-gallery-grid {
   display: grid;
-  gap: 0.7rem;
-  margin-bottom: 1rem;
-}
-
-.upload-label {
-  font-weight: 700;
-}
-
-#photo-upload-input {
-  color: var(--muted);
-}
-
-.upload-note {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.uploaded-photo-gallery {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 
-.upload-empty {
-  grid-column: 1 / -1;
+.gallery-photo {
   margin: 0;
+  padding: 0.45rem;
 }
 
-.uploaded-photo {
-  margin: 0;
-}
-
-.uploaded-photo img {
+.gallery-photo img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 10px;
-  border: 1px solid var(--border);
-}
-
-.uploaded-photo figcaption {
-  margin-top: 0.65rem;
-  color: var(--muted);
-  font-size: 0.9rem;
-  overflow-wrap: anywhere;
 }
 
 .quick-info {
@@ -429,7 +389,7 @@ h2 {
 @media (max-width: 940px) {
   .menu-grid,
   .review-grid,
-  .uploaded-photo-gallery {
+  .photo-gallery-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -469,7 +429,7 @@ h2 {
 @media (max-width: 580px) {
   .menu-grid,
   .review-grid,
-  .uploaded-photo-gallery {
+  .photo-gallery-grid {
     grid-template-columns: 1fr;
   }
 }
