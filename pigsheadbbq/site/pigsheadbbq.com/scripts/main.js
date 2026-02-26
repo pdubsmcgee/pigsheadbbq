@@ -30,6 +30,25 @@ const menuTemplate = document.querySelector('#menu-template[data-menu-sheet]');
 const isPublishedSheetUrl = (url) =>
   /^https:\/\/docs\.google\.com\/spreadsheets\/d\/e\/.+\/pub\?output=csv(?:&.*)?$/i.test(url);
 
+const toCsvExportUrl = (url) => {
+  if (!url) return '';
+
+  if (isPublishedSheetUrl(url)) {
+    return url;
+  }
+
+  const standardSheetMatch =
+    url.match(/^https:\/\/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9-_]+)\/.+$/i) ||
+    url.match(/^https:\/\/docs\.google\.com\/spreadsheets\/d\/([a-zA-Z0-9-_]+)$/i);
+
+  if (!standardSheetMatch) {
+    return '';
+  }
+
+  const sheetId = standardSheetMatch[1];
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+};
+
 const parseCsvLine = (line) => {
   const values = [];
   let current = '';
@@ -62,10 +81,11 @@ const hydrateMenuFromGoogleSheet = async () => {
   if (!menuTemplate) return;
 
   const sheetUrl = menuTemplate.dataset.menuSheet || '';
-  if (!isPublishedSheetUrl(sheetUrl)) return;
+  const csvUrl = toCsvExportUrl(sheetUrl);
+  if (!csvUrl) return;
 
   try {
-    const response = await fetch(sheetUrl);
+    const response = await fetch(csvUrl);
     if (!response.ok) return;
 
     const csvText = await response.text();
@@ -144,4 +164,3 @@ const hydrateMenuFromGoogleSheet = async () => {
 };
 
 hydrateMenuFromGoogleSheet();
-
