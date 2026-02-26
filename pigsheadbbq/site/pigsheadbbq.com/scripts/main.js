@@ -144,3 +144,99 @@ const hydrateMenuFromGoogleSheet = async () => {
 };
 
 hydrateMenuFromGoogleSheet();
+
+const uploadInput = document.querySelector('#photo-upload-input');
+const uploadGallery = document.querySelector('#uploaded-photo-gallery');
+const clearUploadsButton = document.querySelector('#clear-uploaded-photos');
+const UPLOAD_STORAGE_KEY = 'phbbq_uploaded_photos';
+const MAX_STORED_IMAGES = 12;
+
+const readStoredUploads = () => {
+  try {
+    const storedValue = localStorage.getItem(UPLOAD_STORAGE_KEY);
+    const parsed = storedValue ? JSON.parse(storedValue) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeStoredUploads = (uploads) => {
+  try {
+    localStorage.setItem(UPLOAD_STORAGE_KEY, JSON.stringify(uploads.slice(0, MAX_STORED_IMAGES)));
+  } catch {
+    // Ignore write failures (for example in private mode with limited storage).
+  }
+};
+
+const renderUploads = () => {
+  if (!uploadGallery) return;
+
+  const uploads = readStoredUploads();
+  uploadGallery.replaceChildren();
+
+  if (uploads.length === 0) {
+    const emptyState = document.createElement('p');
+    emptyState.className = 'upload-empty card';
+    emptyState.textContent = 'No photos uploaded yet. Use the picker above to add images.';
+    uploadGallery.appendChild(emptyState);
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  uploads.forEach((upload) => {
+    const figure = document.createElement('figure');
+    figure.className = 'uploaded-photo card';
+
+    const image = document.createElement('img');
+    image.src = upload.dataUrl;
+    image.alt = upload.name ? `Uploaded photo: ${upload.name}` : 'Uploaded customer photo';
+
+    const caption = document.createElement('figcaption');
+    caption.textContent = upload.name || 'Uploaded image';
+
+    figure.appendChild(image);
+    figure.appendChild(caption);
+    fragment.appendChild(figure);
+  });
+
+  uploadGallery.appendChild(fragment);
+};
+
+if (uploadInput && uploadGallery) {
+  renderUploads();
+
+  uploadInput.addEventListener('change', async (event) => {
+    const selectedFiles = Array.from(event.target.files || []).filter((file) => file.type.startsWith('image/'));
+    if (selectedFiles.length === 0) return;
+
+    const existingUploads = readStoredUploads();
+    const availableSlots = Math.max(MAX_STORED_IMAGES - existingUploads.length, 0);
+    const filesToStore = selectedFiles.slice(0, availableSlots);
+
+    const newUploads = await Promise.all(
+      filesToStore.map(
+        (file) =>
+          new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve({ name: file.name, dataUrl: reader.result });
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(file);
+          }),
+      ),
+    );
+
+    const validUploads = newUploads.filter(Boolean);
+    if (validUploads.length > 0) {
+      writeStoredUploads([...validUploads, ...existingUploads]);
+      renderUploads();
+    }
+
+    uploadInput.value = '';
+  });
+
+  clearUploadsButton?.addEventListener('click', () => {
+    localStorage.removeItem(UPLOAD_STORAGE_KEY);
+    renderUploads();
+  });
+}
