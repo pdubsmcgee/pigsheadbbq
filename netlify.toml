@@ -1,0 +1,5 @@
+[build]
+  publish = "pigsheadbbq/site/pigsheadbbq.com"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
