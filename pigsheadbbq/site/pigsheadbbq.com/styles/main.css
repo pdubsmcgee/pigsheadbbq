@@ -1,0 +1,410 @@
+:root {
+  --bg: #120706;
+  --panel: #22100e;
+  --text: #fff5ee;
+  --muted: #e7d2c7;
+  --accent: #ff5f2a;
+  --accent-2: #ffc857;
+  --border: #4f2b24;
+  --max: 1120px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  line-height: 1.55;
+  color: var(--text);
+  background: linear-gradient(180deg, #100605, #1a0b09 25%, #160807);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -120px;
+  background: #fff;
+  color: #111;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.5rem 0.85rem;
+  z-index: 100;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+.container {
+  width: min(var(--max), 92vw);
+  margin-inline: auto;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(8px);
+  background: rgba(18, 7, 6, 0.86);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nav-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 78px;
+  gap: 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text);
+  text-decoration: none;
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 0.04em;
+  font-size: 1.6rem;
+}
+
+.brand img {
+  width: 42px;
+  height: 42px;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.site-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.site-nav a:hover {
+  color: #fff;
+}
+
+.site-nav a[aria-current="page"] {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.hero {
+  position: relative;
+  min-height: 70vh;
+  display: grid;
+  align-items: end;
+}
+
+.hero > img,
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero > img {
+  object-fit: cover;
+}
+
+.hero-overlay {
+  background: linear-gradient(100deg, rgba(8, 2, 2, 0.82) 30%, rgba(8, 2, 2, 0.25));
+}
+
+.hero-content {
+  position: relative;
+  padding: 4rem 0;
+  max-width: 700px;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 8vw, 5rem);
+  margin: 0.35rem 0 0.85rem;
+}
+
+h2 {
+  font-size: clamp(1.9rem, 4vw, 3rem);
+}
+
+.kicker {
+  color: var(--accent-2);
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-weight: 700;
+  margin: 0;
+}
+
+.hero-cta,
+.about-actions {
+  margin-top: 1.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.button {
+  display: inline-block;
+  border: 1px solid transparent;
+  padding: 0.75rem 1.1rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button-primary {
+  background: linear-gradient(180deg, var(--accent), #d83d0f);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(255, 95, 42, 0.28);
+}
+
+.button-primary:hover {
+  box-shadow: 0 10px 24px rgba(255, 95, 42, 0.38);
+}
+
+.button-small {
+  padding: 0.5rem 0.9rem;
+}
+
+.button-secondary,
+.button-outline {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(231, 210, 199, 0.8);
+  color: var(--muted);
+  box-shadow: none;
+}
+
+.button-secondary:hover,
+.button-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.quick-info {
+  margin-top: 1.6rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.quick-info article,
+.card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.1rem;
+}
+
+.menu,
+.reviews,
+.about-page {
+  padding: 4rem 0;
+}
+
+.section-head {
+  margin-bottom: 1.25rem;
+}
+
+
+.menu-links {
+  margin: 0.8rem 0 0;
+}
+
+.download-help {
+  color: var(--muted);
+  margin: 0.65rem 0 0;
+  font-size: 0.95rem;
+}
+
+.menu-grid,
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.card p {
+  color: var(--muted);
+}
+
+.quick-info a {
+  color: var(--accent-2);
+}
+
+.catering {
+  padding: 4rem 0;
+  background: radial-gradient(circle at top left, rgba(255, 95, 42, 0.2), transparent 45%);
+}
+
+.catering-wrap {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.2rem;
+  align-items: center;
+}
+
+.catering img {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.site-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 2rem;
+}
+
+.footer-wrap {
+  padding: 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  justify-content: space-between;
+}
+
+.footer-links {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.about-page {
+  min-height: calc(100vh - 190px);
+}
+
+
+
+.about-story {
+  max-width: 860px;
+}
+
+.about-story p {
+  color: var(--muted);
+}
+
+.about-story .basic-image {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.about-story .outro {
+  color: var(--accent-2);
+  font-weight: 800;
+}
+
+.facebook-feed {
+  padding: 1rem 0 4rem;
+}
+
+.facebook-feed .section-head p {
+  max-width: 72ch;
+}
+
+.facebook-embed {
+  display: grid;
+  justify-items: center;
+  gap: 0.8rem;
+}
+
+.facebook-embed iframe {
+  width: min(100%, 500px);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.facebook-note {
+  margin: 0;
+  text-align: center;
+}
+
+.facebook-note a {
+  color: var(--accent-2);
+}
+
+@media (max-width: 940px) {
+  .menu-grid,
+  .review-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catering-wrap,
+  .quick-info {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    border-radius: 999px;
+    padding: 0.55rem 0.85rem;
+  }
+
+  .site-nav {
+    position: absolute;
+    right: 4vw;
+    top: 72px;
+    width: min(320px, 92vw);
+    background: #2b1512;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.85rem;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-nav.open {
+    display: flex;
+  }
+}
+
+@media (max-width: 580px) {
+  .menu-grid,
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+}

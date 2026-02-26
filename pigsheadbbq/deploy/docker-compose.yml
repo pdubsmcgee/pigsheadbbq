@@ -1,0 +1,31 @@
+services:
+  app:
+    image: python:3.12-slim
+    working_dir: /app
+    command: >-
+      sh -c "pip install --no-cache-dir -r server/requirements.txt &&
+      gunicorn --bind 0.0.0.0:8000 server.app:app"
+    env_file:
+      - .env
+    volumes:
+      - ..:/app
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.8
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
