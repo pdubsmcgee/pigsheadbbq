@@ -1,5 +1,5 @@
 [build]
-  base = "pigsheadbbq"
+  command = "python3 scripts/build-site.py"
   publish = "site/pigsheadbbq.com"
 
 [build.environment]
