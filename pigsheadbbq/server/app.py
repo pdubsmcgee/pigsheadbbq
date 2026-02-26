@@ -30,6 +30,7 @@ PASSWORD_HASHER = PasswordHasher()
 DEFAULT_MENU_SHEET_URL = (
     "https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/edit?usp=drivesdk"
 )
+DEFAULT_CATERING_SHEET_URL = DEFAULT_MENU_SHEET_URL
 
 
 @dataclass
@@ -216,7 +217,7 @@ def _authenticated_username() -> str | None:
 
 
 
-def _to_csv_export_url(url: str) -> str:
+def _to_csv_export_url(url: str, sheet_gid: str | None = None) -> str:
     published_pattern = r"^https://docs\.google\.com/spreadsheets/d/e/.+/pub\?output=csv(?:&.*)?$"
     if re.match(published_pattern, url, re.IGNORECASE):
         return url
@@ -226,11 +227,13 @@ def _to_csv_export_url(url: str) -> str:
         return url
 
     sheet_id = sheet_id_match.group(1)
-    return f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+    export_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
+    if sheet_gid:
+        return f"{export_url}&gid={sheet_gid}"
+    return export_url
 
-def _download_menu_items() -> list[MenuItem]:
-    menu_sheet_url = os.environ.get("MENU_SHEET_URL", DEFAULT_MENU_SHEET_URL)
-    csv_export_url = _to_csv_export_url(menu_sheet_url)
+def _download_menu_items(sheet_url: str, sheet_gid: str | None = None) -> list[MenuItem]:
+    csv_export_url = _to_csv_export_url(sheet_url, sheet_gid=sheet_gid)
     with urlopen(csv_export_url, timeout=10) as response:
         csv_text = response.read().decode("utf-8")
 
@@ -416,7 +419,10 @@ def index() -> Response:
 @app.get("/menu.pdf")
 def menu_pdf() -> Response:
     try:
-        menu_items = _download_menu_items()
+        menu_items = _download_menu_items(
+            os.environ.get("MENU_SHEET_URL", DEFAULT_MENU_SHEET_URL),
+            sheet_gid=os.environ.get("MENU_SHEET_GID"),
+        )
         if not menu_items:
             return Response("Menu data is currently unavailable.", status=503)
         pdf_bytes = _build_menu_pdf(menu_items)
@@ -425,6 +431,25 @@ def menu_pdf() -> Response:
 
     response = Response(pdf_bytes, mimetype="application/pdf")
     response.headers["Content-Disposition"] = 'inline; filename="pigs-head-bbq-menu.pdf"'
+    response.headers["Cache-Control"] = "public, max-age=300"
+    return response
+
+
+@app.get("/catering-menu.pdf")
+def catering_menu_pdf() -> Response:
+    try:
+        menu_items = _download_menu_items(
+            os.environ.get("CATERING_SHEET_URL", DEFAULT_CATERING_SHEET_URL),
+            sheet_gid=os.environ.get("CATERING_SHEET_GID"),
+        )
+        if not menu_items:
+            return Response("Catering menu data is currently unavailable.", status=503)
+        pdf_bytes = _build_menu_pdf(menu_items)
+    except Exception:
+        return Response("Unable to generate catering menu PDF right now.", status=503)
+
+    response = Response(pdf_bytes, mimetype="application/pdf")
+    response.headers["Content-Disposition"] = 'inline; filename="pigs-head-bbq-catering-menu.pdf"'
     response.headers["Cache-Control"] = "public, max-age=300"
     return response
 

@@ -300,6 +300,9 @@ h2 {
 
 .menu-links {
   margin: 0.8rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
 }
 
 .download-help {
