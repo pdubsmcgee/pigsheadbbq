@@ -49,6 +49,7 @@
           </p>
           <div class="hero-cta">
             <a class="button button-primary" href="tel:+12694476178">Call 269-447-6178</a>
+            <a class="button button-secondary" href="about.html">Read Our Backstory</a>
           </div>
         </div>
       </section>
@@ -182,6 +183,28 @@
           </blockquote>
         </div>
       </section>
+      <section id="photo-uploads" class="photo-uploads container">
+        <div class="section-head">
+          <p class="kicker">Share Photos</p>
+          <h2>Upload Pictures For Future Site Updates</h2>
+          <p>
+            Add food, event, or truck photos here so we can review and use the best ones in future site updates. Images stay
+            in this browser until you remove them.
+          </p>
+          <p>
+            You can also drop original files into the root repo folder <code>repo-photo-uploads/</code> so we can pull them into
+            the site later.
+          </p>
+        </div>
+        <div class="upload-panel card">
+          <label class="upload-label" for="photo-upload-input">Select one or more images</label>
+          <input id="photo-upload-input" type="file" accept="image/*" multiple />
+          <p class="upload-note">Tip: Use clear, bright photos under 5MB each for the best quality.</p>
+          <button id="clear-uploaded-photos" class="button button-outline button-small" type="button">Clear Uploaded Photos</button>
+        </div>
+        <div id="uploaded-photo-gallery" class="uploaded-photo-gallery" aria-live="polite"></div>
+      </section>
+    
     </main>
 
     <footer class="site-footer">
