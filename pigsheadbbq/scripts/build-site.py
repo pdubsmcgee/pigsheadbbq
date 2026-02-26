@@ -41,8 +41,8 @@ PAGES = {
         "description": "A modern, mobile-friendly rebuild of the Pigs Head BBQ website featuring quick actions, highlighted menu favorites, testimonials, and catering details.",
         "content": "index.content.html",
         "header_vars": {
-            "MENU_HREF": "#menu",
-            "CATERING_HREF": "#catering",
+            "MENU_HREF": "/menu.pdf",
+            "CATERING_HREF": "/catering-menu.pdf",
             "FACEBOOK_HREF": "#facebook",
             "REVIEWS_HREF": "#reviews",
             "MENU_CURRENT_ATTR": "",
@@ -57,8 +57,8 @@ PAGES = {
         "description": "Read the Pigs Head BBQ story and how our family-owned team brings craft smokehouse flavors and heartfelt hospitality.",
         "content": "about.content.html",
         "header_vars": {
-            "MENU_HREF": "index.html#menu",
-            "CATERING_HREF": "index.html#catering",
+            "MENU_HREF": "/menu.pdf",
+            "CATERING_HREF": "/catering-menu.pdf",
             "FACEBOOK_HREF": "index.html#facebook",
             "REVIEWS_HREF": "index.html#reviews",
             "MENU_CURRENT_ATTR": "",
