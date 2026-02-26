@@ -220,3 +220,77 @@ Open <http://127.0.0.1:4173/index.html> and verify menu cards update from sheet 
 - If the menu does not update, confirm the URL is a **published CSV** link (`.../pub?output=csv`).
 - Header names must include at least `category` and `item` (lowercase recommended).
 - If Google Sheets is unavailable, the site falls back to the built-in template cards.
+
+## Deployment for secure internet exposure
+
+This project can be exposed safely to the public internet by placing a reverse proxy in front of the Flask/Gunicorn app.
+
+### Reverse proxy configuration (`deploy/Caddyfile`)
+
+- `deploy/Caddyfile` terminates TLS and proxies all traffic to `app:8000`.
+- HTTP is redirected to HTTPS.
+- Certificates are provisioned and renewed automatically by Caddy via Let’s Encrypt.
+- Security headers are enforced at the edge:
+  - `Strict-Transport-Security`
+  - `Content-Security-Policy`
+  - `X-Frame-Options`
+  - `X-Content-Type-Options`
+  - `Referrer-Policy`
+
+### CSP allowlist used
+
+The deployed CSP is intentionally restricted to the origins currently used by the site:
+
+- `https://fonts.googleapis.com` for Google Fonts CSS
+- `https://fonts.gstatic.com` for Google Fonts files
+- `https://www.facebook.com` for the embedded Facebook page iframe and related image requests
+- `https://docs.google.com` for optional Google Sheets CSV fetches
+
+If you add third-party scripts, embeds, APIs, or CDNs later, update the CSP in `deploy/Caddyfile` first.
+
+### Docker Compose deployment (`deploy/docker-compose.yml`)
+
+A Compose stack is provided to run the app and reverse proxy consistently.
+
+1. Create `deploy/.env`:
+
+```bash
+DOMAIN=yourdomain.com
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD_HASH=$argon2id$v=19$m=65536,t=3,p=4$...
+SESSION_SECRET=replace-with-a-long-random-secret
+SESSION_COOKIE_SECURE=true
+```
+
+2. Start services:
+
+```bash
+cd deploy
+docker compose up -d
+```
+
+3. Verify:
+
+```bash
+docker compose ps
+```
+
+### DNS/domain checklist
+
+Before starting the stack in production:
+
+1. Buy or control the target domain (for example `pigsheadbbq.com`).
+2. Create DNS `A` (and optional `AAAA`) records pointing the domain and `www` host to your server public IP.
+3. Wait for DNS propagation.
+4. Ensure ports `80/tcp` and `443/tcp` are reachable from the internet so Let’s Encrypt HTTP challenge and HTTPS traffic succeed.
+
+### Firewall guidance
+
+Minimum recommended inbound rules:
+
+- Allow `22/tcp` only from trusted admin IPs (or your VPN/bastion).
+- Allow `80/tcp` from anywhere (required for HTTP->HTTPS redirect + ACME validation).
+- Allow `443/tcp` from anywhere (public HTTPS).
+- Deny all other inbound ports.
+
+Outbound rules should allow DNS + HTTPS egress so Caddy can request and renew certificates.
