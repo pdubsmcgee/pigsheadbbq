@@ -220,6 +220,36 @@ h2 {
 }
 
 
+
+.signature-strip {
+  margin-top: 2.2rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.feature-card {
+  margin: 0;
+  padding: 0.55rem;
+}
+
+.feature-card img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.feature-card h3 {
+  margin-top: 0.8rem;
+  font-size: 1.55rem;
+}
+
+.feature-card p {
+  margin: 0.35rem 0 0.2rem;
+}
+
 .photo-gallery {
   padding: 4rem 0 1rem;
 }
@@ -389,7 +419,8 @@ h2 {
 @media (max-width: 940px) {
   .menu-grid,
   .review-grid,
-  .photo-gallery-grid {
+  .photo-gallery-grid,
+  .signature-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -429,7 +460,8 @@ h2 {
 @media (max-width: 580px) {
   .menu-grid,
   .review-grid,
-  .photo-gallery-grid {
+  .photo-gallery-grid,
+  .signature-strip {
     grid-template-columns: 1fr;
   }
 }
