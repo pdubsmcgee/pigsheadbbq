@@ -236,6 +236,7 @@ h2 {
 
 .menu,
 .reviews,
+.gallery,
 .about-page {
   padding: 4rem 0;
 }
@@ -334,6 +335,35 @@ h2 {
   font-weight: 800;
 }
 
+
+.gallery-grid {
+  columns: 3 220px;
+  column-gap: 1rem;
+}
+
+.gallery-item {
+  break-inside: avoid;
+  margin: 0 0 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  outline: none;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: auto;
+}
+
+.gallery-item:hover,
+.gallery-item:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(255, 200, 87, 0.9);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
 .facebook-feed {
   padding: 1rem 0 4rem;
 }
@@ -406,5 +436,9 @@ h2 {
   .menu-grid,
   .review-grid {
     grid-template-columns: 1fr;
+  }
+
+  .gallery-grid {
+    columns: 1;
   }
 }
