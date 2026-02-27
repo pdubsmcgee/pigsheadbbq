@@ -234,6 +234,14 @@ Defaults now point to your supplied decks:
 ```bash
 export WEBMENU_SLIDES_URL='https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/edit?usp=sharing'
 export TRUCKMENU_SLIDES_URL='https://docs.google.com/presentation/d/1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk/edit?usp=sharing'
+- `WEBMENU_SLIDES_URL`: web-facing menu deck (recommended to include Menu + Catering tab output)
+- `TRUCKMENU_SLIDES_URL`: TV/truck-facing deck (recommended to include Menu tab output only)
+
+Set both as environment variables before running `scripts/build-site.py`:
+
+```bash
+export WEBMENU_SLIDES_URL='https://docs.google.com/presentation/d/<webmenu-id>/edit'
+export TRUCKMENU_SLIDES_URL='https://docs.google.com/presentation/d/<truckmenu-id>/edit'
 python3 scripts/build-site.py
 ```
 
