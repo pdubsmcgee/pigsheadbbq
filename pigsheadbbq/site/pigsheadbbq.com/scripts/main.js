@@ -65,7 +65,10 @@ widgetTriggers.forEach((trigger) => {
   });
 
   trigger.addEventListener('click', () => {
-    showSlide('webmenu');
+    const defaultTarget = slideButtons[0]?.getAttribute('data-slide-target') || slideFrames[0]?.getAttribute('data-slide-frame');
+    if (defaultTarget) {
+      showSlide(defaultTarget);
+    }
     modal.showModal();
   });
 
