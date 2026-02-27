@@ -106,14 +106,14 @@ def _sheet_display_links(sheet_url: str, sheet_gid: str | None = None) -> dict[s
             "embed": sheet_url,
         }
 
-    gid_query = f"&gid={gid}" if gid else ""
-    gid_path = f"/edit#gid={gid}" if gid else "/edit"
+    gid_export_query = f"&gid={gid}" if gid else ""
+    gid_preview_query = f"?gid={gid}" if gid else ""
     base = f"https://docs.google.com/spreadsheets/d/{sheet_id}"
     return {
-        "pdf": f"{base}/export?format=pdf{gid_query}",
-        "sheet": f"{base}{gid_path}",
-        "csv": f"{base}/export?format=csv{gid_query}",
-        "embed": f"{base}/preview",
+        "pdf": f"{base}/export?format=pdf{gid_export_query}",
+        "sheet": f"{base}/preview{gid_preview_query}",
+        "csv": f"{base}/export?format=csv{gid_export_query}",
+        "embed": f"{base}/preview{gid_preview_query}",
     }
 
 
