@@ -86,3 +86,79 @@ widgetTriggers.forEach((trigger) => {
     }
   });
 });
+
+
+const signupForm = document.querySelector('[data-signup-form]');
+
+if (signupForm instanceof HTMLFormElement) {
+  const submitButton = signupForm.querySelector('[data-signup-submit]');
+  const messageNode = signupForm.querySelector('[data-signup-message]');
+  const sourceField = signupForm.querySelector('[data-signup-source]');
+
+  if (sourceField instanceof HTMLInputElement) {
+    sourceField.value = window.location.pathname || '/';
+  }
+
+  const setMessage = (message, state = '') => {
+    if (!(messageNode instanceof HTMLElement)) {
+      return;
+    }
+
+    messageNode.textContent = message;
+    if (state) {
+      messageNode.setAttribute('data-state', state);
+    } else {
+      messageNode.removeAttribute('data-state');
+    }
+  };
+
+  signupForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (!signupForm.reportValidity()) {
+      setMessage('Please complete the required fields to subscribe.', 'error');
+      return;
+    }
+
+    const endpoint = signupForm.getAttribute('action') || '/api/subscribe';
+    const formData = new FormData(signupForm);
+
+    signupForm.setAttribute('data-busy', 'true');
+    if (submitButton instanceof HTMLButtonElement) {
+      submitButton.disabled = true;
+    }
+    setMessage('Submitting your request...');
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+        body: formData,
+      });
+      const payload = await response.json().catch(() => null);
+      const responseMessage = payload && typeof payload.message === 'string'
+        ? payload.message
+        : 'We could not process your signup right now. Please try again.';
+
+      if (!response.ok) {
+        setMessage(responseMessage, 'error');
+        return;
+      }
+
+      signupForm.reset();
+      if (sourceField instanceof HTMLInputElement) {
+        sourceField.value = window.location.pathname || '/';
+      }
+      setMessage(responseMessage, 'success');
+    } catch (error) {
+      setMessage('A network issue prevented signup. Please try again in a moment.', 'error');
+    } finally {
+      signupForm.removeAttribute('data-busy');
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = false;
+      }
+    }
+  });
+}

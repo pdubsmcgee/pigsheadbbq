@@ -73,6 +73,40 @@
         </article>
       </section>
     
+      <section class="container signup-strip" aria-labelledby="signup-title">
+        <article class="card signup-card">
+          <div>
+            <p class="kicker">Stay in the Loop</p>
+            <h2 id="signup-title">Get Menu Drops and Location Alerts</h2>
+            <p>Sign up for occasional specials by email, and optionally add your phone for SMS updates.</p>
+          </div>
+          <form class="signup-form" data-signup-form action="/api/subscribe" method="post" novalidate>
+            <div class="signup-grid">
+              <label for="signup-email">Email</label>
+              <input id="signup-email" name="email" type="email" autocomplete="email" required />
+    
+              <label for="signup-phone">Phone (optional for SMS)</label>
+              <input id="signup-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" />
+            </div>
+    
+            <div class="signup-consent-wrap">
+              <input id="signup-consent" name="consent" type="checkbox" value="yes" required />
+              <label for="signup-consent">
+                I agree to receive occasional email updates from Pigs Head BBQ. If I provide my phone number, I also
+                consent to SMS updates. Message/data rates may apply. Reply STOP to opt out.
+              </label>
+            </div>
+    
+            <input type="hidden" name="source_page" value="/" data-signup-source />
+    
+            <div class="signup-actions">
+              <button class="button button-primary" type="submit" data-signup-submit>Sign Up</button>
+              <p class="signup-message" data-signup-message role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </article>
+      </section>
+    
     
       <section class="signature-strip container">
         <article class="feature-card card">

@@ -279,6 +279,90 @@ h2 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.signup-strip {
+  margin-top: 1.2rem;
+}
+
+.signup-card {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.signup-card h2 {
+  font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+}
+
+.signup-card > div > p {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+}
+
+.signup-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.signup-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+}
+
+.signup-grid label,
+.signup-consent-wrap label {
+  font-weight: 700;
+}
+
+.signup-grid input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text);
+  padding: 0.68rem 0.72rem;
+}
+
+.signup-consent-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+}
+
+.signup-consent-wrap input {
+  margin-top: 0.3rem;
+}
+
+.signup-consent-wrap label {
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.signup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.signup-message {
+  margin: 0;
+  color: var(--muted);
+  min-height: 1.4rem;
+}
+
+.signup-message[data-state="success"] {
+  color: #8df7b2;
+}
+
+.signup-message[data-state="error"] {
+  color: #ffb3b3;
+}
+
+.signup-form[data-busy="true"] [data-signup-submit] {
+  opacity: 0.68;
+  cursor: progress;
+}
+
 .quick-info article,
 .card {
   background: rgba(255, 255, 255, 0.04);
