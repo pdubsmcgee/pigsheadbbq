@@ -318,6 +318,71 @@ h2 {
   gap: 1rem;
 }
 
+.menu-widget {
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+}
+
+.menu-widget-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  align-items: center;
+}
+
+.menu-widget h3 {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+.menu-widget iframe {
+  width: 100%;
+  min-height: 420px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.menu-viewer-modal {
+  width: min(1100px, 94vw);
+  min-height: min(86vh, 760px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0;
+  background: #1d0d0c;
+  color: var(--text);
+}
+
+.menu-viewer-modal::backdrop {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(3px);
+}
+
+.menu-viewer-shell {
+  height: 100%;
+  min-height: inherit;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.menu-viewer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.menu-viewer-shell iframe {
+  width: 100%;
+  height: 100%;
+  min-height: min(74vh, 670px);
+  border: 0;
+  background: #fff;
+}
+
 .card p {
   color: var(--muted);
 }
@@ -457,6 +522,10 @@ h2 {
 
   .site-nav.open {
     display: flex;
+  }
+
+  .menu-widget iframe {
+    min-height: 360px;
   }
 }
 

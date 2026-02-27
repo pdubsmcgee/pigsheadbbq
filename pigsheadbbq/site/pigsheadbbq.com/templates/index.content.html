@@ -93,14 +93,30 @@
       <p class="kicker">Fan Favorites</p>
       <h2>Smokehouse Menu Highlights</h2>
       <p>
-        Browse our featured menu below or open the latest weekly menu from our Google Sheet.
+        Browse our featured menu below, preview this week's live sheet, or open a full-screen menu viewer.
       </p>
       <p class="menu-links">
         <a class="button button-outline" href="{{MENU_HREF}}" target="_blank" rel="noreferrer">Open Weekly Menu PDF</a>
-        <a class="button button-outline" href="{{MENU_SHEET_HREF}}" target="_blank" rel="noreferrer">View Live Sheet</a>
+        <a class="button button-outline" href="{{MENU_SHEET_HREF}}" target="_blank" rel="noreferrer">Open Live Sheet</a>
+        <button class="button button-outline" type="button" data-menu-widget-trigger="weekly-menu-modal">Open Menu Viewer</button>
         <a class="button button-outline" href="{{MENU_CSV_HREF}}" target="_blank" rel="noreferrer">Download CSV</a>
       </p>
     </div>
+    <article class="menu-widget card" aria-labelledby="menu-widget-title">
+      <div class="menu-widget-header">
+        <div>
+          <p class="kicker">Live Widget</p>
+          <h3 id="menu-widget-title">This Week's Menu Preview</h3>
+        </div>
+        <a class="button button-secondary button-small" href="{{MENU_SHEET_HREF}}" target="_blank" rel="noreferrer">Open in Google Sheets</a>
+      </div>
+      <iframe
+        title="Pigs Head BBQ weekly menu"
+        src="{{MENU_EMBED_HREF}}"
+        loading="lazy"
+        referrerpolicy="no-referrer"
+      ></iframe>
+    </article>
     <div
       id="menu-template"
       class="menu-grid"
@@ -126,6 +142,23 @@
         <p>Feeds 8 — choice of three meats and four family-size sides</p>
       </article>
     </div>
+
+    <dialog class="menu-viewer-modal" id="weekly-menu-modal" aria-labelledby="menu-viewer-title">
+      <div class="menu-viewer-shell">
+        <div class="menu-viewer-head">
+          <h3 id="menu-viewer-title">Weekly Menu Viewer</h3>
+          <button class="button button-outline button-small" type="button" data-menu-widget-close>
+            Close
+          </button>
+        </div>
+        <iframe
+          title="Weekly menu viewer"
+          src="{{MENU_EMBED_HREF}}"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        ></iframe>
+      </div>
+    </dialog>
   </section>
 
   <section id="catering" class="catering">
