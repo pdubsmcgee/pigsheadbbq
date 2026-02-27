@@ -19,6 +19,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 CANONICAL_BUILD_SCRIPT = REPO_ROOT / "pigsheadbbq" / "scripts" / "build-site.py"
 SOURCE_SITE_DIR = REPO_ROOT / "pigsheadbbq" / "site" / "pigsheadbbq.com"
 PUBLISH_SITE_DIR = REPO_ROOT / "site" / "pigsheadbbq.com"
+ROOT_CNAME_FILE = REPO_ROOT / "CNAME"
 
 
 def main() -> None:
@@ -32,6 +33,10 @@ def main() -> None:
         shutil.rmtree(PUBLISH_SITE_DIR)
     shutil.copytree(SOURCE_SITE_DIR, PUBLISH_SITE_DIR)
 
+    # Ensure static-hosting metadata is bundled for GitHub Pages deployments.
+    if ROOT_CNAME_FILE.exists():
+        shutil.copy2(ROOT_CNAME_FILE, PUBLISH_SITE_DIR / "CNAME")
+    (PUBLISH_SITE_DIR / ".nojekyll").write_text("\n")
 
 if __name__ == "__main__":
     main()
