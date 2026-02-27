@@ -163,10 +163,10 @@ def main() -> None:
         sheet_gid=os.environ.get("CATERING_SHEET_GID"),
     )
     webmenu_slides_links = _slides_display_links(
-        os.environ.get("WEBMENU_SLIDES_URL", "https://docs.google.com/presentation/d/WEBMENU_SLIDES_ID/edit")
+        os.environ.get("WEBMENU_SLIDES_URL", "https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/edit?usp=sharing")
     )
     truckmenu_slides_links = _slides_display_links(
-        os.environ.get("TRUCKMENU_SLIDES_URL", "https://docs.google.com/presentation/d/TRUCKMENU_SLIDES_ID/edit")
+        os.environ.get("TRUCKMENU_SLIDES_URL", "https://docs.google.com/presentation/d/1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk/edit?usp=sharing")
     )
 
     for filename, page in PAGES.items():

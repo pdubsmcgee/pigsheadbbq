@@ -1,37 +1,54 @@
 # Google Slides menu sync plan (`webmenu` + `truckmenu`)
 
-This site now supports embedding **two separate Google Slides decks**:
+This repo now supports two separate Google Slides decks:
 
-- `webmenu`: should include content from both **Menu** and **Catering** sheet tabs.
-- `truckmenu`: should include content from **Menu** tab only (TV/HDMI display).
+- **webmenu** (website): include both **Menu** and **Catering** tabs.
+- **truckmenu** (food truck HDTV): include only the **Menu** tab.
 
-## 1) Create / name the decks
+## Decks already provided
 
-1. Create one Google Slides presentation named **webmenu**.
-2. Create one Google Slides presentation named **truckmenu**.
-3. In each deck, place text placeholders like:
-   - `{{MENU_ITEMS}}`
-   - `{{CATERING_ITEMS}}` (webmenu only)
+Use these two deck URLs:
 
-## 2) Install the Apps Script sync
+- webmenu: `https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/edit?usp=sharing`
+- truckmenu: `https://docs.google.com/presentation/d/1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk/edit?usp=sharing`
+
+## What the script does
+
+`scripts/google_apps_script_menu_sync.js` rebuilds each deck with a polished branded layout:
+
+- dark branded background and accent bars
+- hero slide per deck with imagery
+- category cards with item/price/description blocks
+- pagination when categories exceed one slide
+- timestamp footer to show last sync run
+
+## 1) Install Apps Script
 
 1. Open <https://script.google.com>.
-2. Create a new standalone script.
-3. Paste in `scripts/google_apps_script_menu_sync.js` from this repo.
-4. Set these script properties:
+2. Create a **standalone** script project.
+3. Paste in `scripts/google_apps_script_menu_sync.js`.
+4. Set Script Properties:
    - `MENU_SPREADSHEET_ID`
-   - `WEBMENU_PRESENTATION_ID`
-   - `TRUCKMENU_PRESENTATION_ID`
-5. Run `syncAllMenus` once and grant permissions.
-6. Add a time-based trigger (e.g. every 15 minutes).
+   - `WEBMENU_PRESENTATION_ID=1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M`
+   - `TRUCKMENU_PRESENTATION_ID=1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk`
+5. Run `syncAllMenus` once and approve permissions.
+6. Add a time-based trigger (every 15 minutes is a good default).
 
-## 3) Publish each deck for embedding
+## 2) Publish each deck for embedding
 
-Inside each slides deck:
-- **File → Share → Publish to web** and publish the slideshow.
+In each deck:
 
-Then set server env vars:
-- `WEBMENU_SLIDES_URL=https://docs.google.com/presentation/d/<webmenu-id>/edit`
-- `TRUCKMENU_SLIDES_URL=https://docs.google.com/presentation/d/<truckmenu-id>/edit`
+- **File → Share → Publish to web**
 
-The build script converts these to embed/present links used by the website widget and modal viewer.
+## 3) Build-site environment variables
+
+Set these env vars (defaults in `build-site.py` already point at these same decks):
+
+- `WEBMENU_SLIDES_URL=https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/edit?usp=sharing`
+- `TRUCKMENU_SLIDES_URL=https://docs.google.com/presentation/d/1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk/edit?usp=sharing`
+
+Then rebuild:
+
+```bash
+python3 scripts/build-site.py
+```
