@@ -414,6 +414,10 @@ h2 {
   margin-bottom: 1rem;
 }
 
+.menu-table-grid-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .menu-widget-header {
   display: flex;
   flex-wrap: wrap;
