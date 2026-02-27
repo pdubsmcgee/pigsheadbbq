@@ -93,30 +93,33 @@
       <p class="kicker">Fan Favorites</p>
       <h2>Smokehouse Menu Highlights</h2>
       <p>
-        Browse our featured menu below, preview this week's live sheet, or open a full-screen menu viewer.
+        Browse featured favorites below, then open our polished menu widget for weekly and catering details.
       </p>
       <p class="menu-links">
-        <a class="button button-outline" href="{{MENU_HREF}}" target="_blank" rel="noreferrer">Open Weekly Menu PDF</a>
-        <a class="button button-outline" href="{{MENU_SHEET_HREF}}" target="_blank" rel="noreferrer">Open Live Sheet</a>
-        <button class="button button-outline" type="button" data-menu-widget-trigger="weekly-menu-modal">Open Menu Viewer</button>
-        <a class="button button-outline" href="{{MENU_CSV_HREF}}" target="_blank" rel="noreferrer">Download CSV</a>
+        <button class="button button-primary" type="button" data-menu-widget-trigger="weekly-menu-modal">
+          Open Weekly Menu Viewer
+        </button>
+        <a class="button button-outline" href="{{WEBMENU_SLIDES_HREF}}" target="_blank" rel="noreferrer">Open Web Menu Slides</a>
+        <a class="button button-outline" href="{{TRUCKMENU_SLIDES_HREF}}" target="_blank" rel="noreferrer">Open Truck Menu Slides</a>
       </p>
     </div>
+
     <article class="menu-widget card" aria-labelledby="menu-widget-title">
       <div class="menu-widget-header">
         <div>
           <p class="kicker">Live Widget</p>
-          <h3 id="menu-widget-title">This Week's Menu Preview</h3>
+          <h3 id="menu-widget-title">Web Menu Slides (Weekly + Catering)</h3>
         </div>
-        <a class="button button-secondary button-small" href="{{MENU_SHEET_HREF}}" target="_blank" rel="noreferrer">Open in Google Sheets</a>
+        <a class="button button-secondary button-small" href="{{WEBMENU_SLIDES_HREF}}" target="_blank" rel="noreferrer">Open Fullscreen</a>
       </div>
       <iframe
-        title="Pigs Head BBQ weekly menu"
-        src="{{MENU_EMBED_HREF}}"
+        title="Pigs Head BBQ web menu slides"
+        src="{{WEBMENU_SLIDES_EMBED_HREF}}"
         loading="lazy"
         referrerpolicy="no-referrer"
       ></iframe>
     </article>
+
     <div
       id="menu-template"
       class="menu-grid"
@@ -146,17 +149,38 @@
     <dialog class="menu-viewer-modal" id="weekly-menu-modal" aria-labelledby="menu-viewer-title">
       <div class="menu-viewer-shell">
         <div class="menu-viewer-head">
-          <h3 id="menu-viewer-title">Weekly Menu Viewer</h3>
-          <button class="button button-outline button-small" type="button" data-menu-widget-close>
-            Close
-          </button>
+          <div>
+            <p class="kicker">Weekly Menu Viewer</p>
+            <h3 id="menu-viewer-title">Choose Web or Truck Display</h3>
+          </div>
+          <div class="menu-viewer-actions">
+            <button class="button button-outline button-small" type="button" data-slide-target="webmenu">Web Menu</button>
+            <button class="button button-outline button-small" type="button" data-slide-target="truckmenu">Truck Menu</button>
+            <button class="button button-outline button-small" type="button" data-menu-widget-close>
+              Close
+            </button>
+          </div>
         </div>
-        <iframe
-          title="Weekly menu viewer"
-          src="{{MENU_EMBED_HREF}}"
-          loading="lazy"
-          referrerpolicy="no-referrer"
-        ></iframe>
+        <div class="menu-viewer-body">
+          <p class="menu-viewer-note">Web Menu should contain the <strong>Menu</strong> + <strong>Catering</strong> sheet tabs. Truck Menu should use only the <strong>Menu</strong> tab.</p>
+          <iframe
+            class="menu-slide-frame"
+            data-slide-frame="webmenu"
+            title="Web menu slides"
+            src="{{WEBMENU_SLIDES_EMBED_HREF}}"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          ></iframe>
+          <iframe
+            class="menu-slide-frame"
+            data-slide-frame="truckmenu"
+            title="Truck menu slides"
+            src="{{TRUCKMENU_SLIDES_EMBED_HREF}}"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+            hidden
+          ></iframe>
+        </div>
       </div>
     </dialog>
   </section>

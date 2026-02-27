@@ -39,8 +39,33 @@ widgetTriggers.forEach((trigger) => {
   }
 
   const closeButton = modal.querySelector('[data-menu-widget-close]');
+  const slideButtons = modal.querySelectorAll('[data-slide-target]');
+  const slideFrames = modal.querySelectorAll('[data-slide-frame]');
+
+  const showSlide = (targetName) => {
+    slideFrames.forEach((slideFrame) => {
+      const frameName = slideFrame.getAttribute('data-slide-frame');
+      slideFrame.hidden = frameName !== targetName;
+    });
+
+    slideButtons.forEach((slideButton) => {
+      const buttonName = slideButton.getAttribute('data-slide-target');
+      const isActive = buttonName === targetName;
+      slideButton.setAttribute('aria-pressed', String(isActive));
+    });
+  };
+
+  slideButtons.forEach((slideButton) => {
+    slideButton.addEventListener('click', () => {
+      const targetName = slideButton.getAttribute('data-slide-target');
+      if (targetName) {
+        showSlide(targetName);
+      }
+    });
+  });
 
   trigger.addEventListener('click', () => {
+    showSlide('webmenu');
     modal.showModal();
   });
 
