@@ -407,6 +407,13 @@ h2 {
   padding: 0.8rem;
 }
 
+.menu-table-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
 .menu-widget-header {
   display: flex;
   flex-wrap: wrap;
@@ -422,7 +429,7 @@ h2 {
 
 .menu-widget iframe {
   width: 100%;
-  min-height: 420px;
+  min-height: min(70vh, 780px);
   border: 0;
   border-radius: 12px;
   background: #fff;
@@ -590,7 +597,8 @@ h2 {
   .menu-grid,
   .review-grid,
   .photo-gallery-grid,
-  .signature-strip {
+  .signature-strip,
+  .menu-table-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -639,7 +647,8 @@ h2 {
   .menu-grid,
   .review-grid,
   .photo-gallery-grid,
-  .signature-strip {
+  .signature-strip,
+  .menu-table-grid {
     grid-template-columns: 1fr;
   }
 }

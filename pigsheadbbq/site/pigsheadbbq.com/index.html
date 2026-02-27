@@ -162,59 +162,52 @@
     
       <section id="menu" class="menu container">
         <div class="section-head">
-          <p class="kicker">Fan Favorites</p>
-          <h2>Smokehouse Menu Highlights</h2>
+          <p class="kicker">Live Menus</p>
+          <h2>Full Menu Tables</h2>
           <p>
-            Browse featured favorites below, then open our polished menu widget for weekly and catering details.
+            Your Google Sheets are now displayed directly as large, scrollable tables so guests can view everything in one
+            place.
           </p>
           <p class="menu-links">
             <button class="button button-primary" type="button" data-menu-widget-trigger="weekly-menu-modal">
-              Open Weekly Menu Viewer
+              Open Fullscreen Menu Viewer
             </button>
-            <a class="button button-outline" href="https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/present" target="_blank" rel="noreferrer">Open Web Menu Slides</a>
-            <a class="button button-outline" href="https://docs.google.com/presentation/d/1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk/present" target="_blank" rel="noreferrer">Open Truck Menu Slides</a>
+            <a class="button button-outline" href="https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/edit" target="_blank" rel="noreferrer">Open Menu Sheet</a>
+            <a class="button button-outline" href="https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/edit" target="_blank" rel="noreferrer">Open Catering Sheet</a>
           </p>
         </div>
     
-        <article class="menu-widget card" aria-labelledby="menu-widget-title">
-          <div class="menu-widget-header">
-            <div>
-              <p class="kicker">Live Widget</p>
-              <h3 id="menu-widget-title">Web Menu Slides (Weekly + Catering)</h3>
+        <div class="menu-table-grid">
+          <article class="menu-widget card" aria-labelledby="menu-widget-title">
+            <div class="menu-widget-header">
+              <div>
+                <p class="kicker">Weekly Menu</p>
+                <h3 id="menu-widget-title">Food Truck Menu Table</h3>
+              </div>
+              <a class="button button-secondary button-small" href="https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/edit" target="_blank" rel="noreferrer">Open Fullscreen</a>
             </div>
-            <a class="button button-secondary button-small" href="https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/present" target="_blank" rel="noreferrer">Open Fullscreen</a>
-          </div>
-          <iframe
-            title="Pigs Head BBQ web menu slides"
-            src="https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/embed?start=false&loop=false&delayms=5000"
-            loading="lazy"
-            referrerpolicy="no-referrer"
-          ></iframe>
-        </article>
+            <iframe
+              title="Pigs Head BBQ weekly menu table"
+              src="https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/preview"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
+          </article>
     
-        <div
-          id="menu-template"
-          class="menu-grid"
-        >
-          <article class="card">
-            <h3>Smoked Meats</h3>
-            <p>Brisket Plate — slow-smoked and served with two sides — $18</p>
-            <p>Pulled Pork Sandwich — hand-pulled pork on a toasted bun — $12</p>
-          </article>
-          <article class="card">
-            <h3>Signature Plates</h3>
-            <p>Rib Tip Basket — smoky, saucy rib tips with fries — $16</p>
-            <p>Jumbo Garlic Pepper Shrimp — seasoned shrimp with house kick — $17</p>
-          </article>
-          <article class="card">
-            <h3>Comfort Sides</h3>
-            <p>Cheesy Mac — creamy, oven-finished macaroni and cheese — $5</p>
-            <p>Loaded Potato Salad — savory house-style potato salad — $5</p>
-          </article>
-          <article class="card">
-            <h3>Family Packs</h3>
-            <p>Feeds 4 — choice of two meats and three family-size sides</p>
-            <p>Feeds 8 — choice of three meats and four family-size sides</p>
+          <article class="menu-widget card" aria-labelledby="catering-widget-title">
+            <div class="menu-widget-header">
+              <div>
+                <p class="kicker">Catering Menu</p>
+                <h3 id="catering-widget-title">Catering Table</h3>
+              </div>
+              <a class="button button-secondary button-small" href="https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/edit" target="_blank" rel="noreferrer">Open Fullscreen</a>
+            </div>
+            <iframe
+              title="Pigs Head BBQ catering menu table"
+              src="https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/preview"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
           </article>
         </div>
     
@@ -222,32 +215,32 @@
           <div class="menu-viewer-shell">
             <div class="menu-viewer-head">
               <div>
-                <p class="kicker">Weekly Menu Viewer</p>
-                <h3 id="menu-viewer-title">Choose Web or Truck Display</h3>
+                <p class="kicker">Fullscreen Viewer</p>
+                <h3 id="menu-viewer-title">Choose Menu or Catering Table</h3>
               </div>
               <div class="menu-viewer-actions">
-                <button class="button button-outline button-small" type="button" data-slide-target="webmenu">Web Menu</button>
-                <button class="button button-outline button-small" type="button" data-slide-target="truckmenu">Truck Menu</button>
+                <button class="button button-outline button-small" type="button" data-slide-target="menu">Menu</button>
+                <button class="button button-outline button-small" type="button" data-slide-target="catering">Catering</button>
                 <button class="button button-outline button-small" type="button" data-menu-widget-close>
                   Close
                 </button>
               </div>
             </div>
             <div class="menu-viewer-body">
-              <p class="menu-viewer-note">Web Menu should contain the <strong>Menu</strong> + <strong>Catering</strong> sheet tabs. Truck Menu should use only the <strong>Menu</strong> tab.</p>
+              <p class="menu-viewer-note">Use the buttons above to quickly switch between the weekly and catering tables.</p>
               <iframe
                 class="menu-slide-frame"
-                data-slide-frame="webmenu"
-                title="Web menu slides"
-                src="https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/embed?start=false&loop=false&delayms=5000"
+                data-slide-frame="menu"
+                title="Weekly menu table"
+                src="https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/preview"
                 loading="lazy"
                 referrerpolicy="no-referrer"
               ></iframe>
               <iframe
                 class="menu-slide-frame"
-                data-slide-frame="truckmenu"
-                title="Truck menu slides"
-                src="https://docs.google.com/presentation/d/1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk/embed?start=false&loop=false&delayms=5000"
+                data-slide-frame="catering"
+                title="Catering menu table"
+                src="https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/preview"
                 loading="lazy"
                 referrerpolicy="no-referrer"
                 hidden
