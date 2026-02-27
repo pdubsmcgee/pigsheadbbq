@@ -117,6 +117,32 @@ def _sheet_display_links(sheet_url: str, sheet_gid: str | None = None) -> dict[s
     }
 
 
+
+
+def _slides_id_from_url(url: str) -> str | None:
+    slide_match = re.match(r"^https://docs\.google\.com/presentation/d/([a-zA-Z0-9-_]+)(?:/.+)?$", url, re.IGNORECASE)
+    if slide_match:
+        return slide_match.group(1)
+    return None
+
+
+def _slides_display_links(slides_url: str) -> dict[str, str]:
+    slides_url = slides_url.strip()
+    slide_id = _slides_id_from_url(slides_url)
+
+    if not slide_id:
+        return {
+            "present": slides_url,
+            "embed": slides_url,
+        }
+
+    base = f"https://docs.google.com/presentation/d/{slide_id}"
+    return {
+        "present": f"{base}/present",
+        "embed": f"{base}/embed?start=false&loop=false&delayms=5000",
+    }
+
+
 def render(template: str, values: dict[str, str]) -> str:
     output = template
     for key, value in values.items():
@@ -136,6 +162,12 @@ def main() -> None:
         os.environ.get("CATERING_SHEET_URL", os.environ.get("MENU_SHEET_URL", DEFAULT_MENU_SHEET_URL)),
         sheet_gid=os.environ.get("CATERING_SHEET_GID"),
     )
+    webmenu_slides_links = _slides_display_links(
+        os.environ.get("WEBMENU_SLIDES_URL", "https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/edit?usp=sharing")
+    )
+    truckmenu_slides_links = _slides_display_links(
+        os.environ.get("TRUCKMENU_SLIDES_URL", "https://docs.google.com/presentation/d/1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk/edit?usp=sharing")
+    )
 
     for filename, page in PAGES.items():
         page_vars = {
@@ -148,6 +180,10 @@ def main() -> None:
             "CATERING_SHEET_HREF": catering_links["sheet"],
             "CATERING_CSV_HREF": catering_links["csv"],
             "CATERING_EMBED_HREF": catering_links["embed"],
+            "WEBMENU_SLIDES_HREF": webmenu_slides_links["present"],
+            "WEBMENU_SLIDES_EMBED_HREF": webmenu_slides_links["embed"],
+            "TRUCKMENU_SLIDES_HREF": truckmenu_slides_links["present"],
+            "TRUCKMENU_SLIDES_EMBED_HREF": truckmenu_slides_links["embed"],
         }
         header = render(header_template, page_vars)
         content = render((TEMPLATES / page["content"]).read_text(), page_vars)

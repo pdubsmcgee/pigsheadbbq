@@ -221,6 +221,26 @@ The homepage menu buttons open `menu.pdf` (weekly) and `catering-menu.pdf` (rela
 
 The browser no longer fetches Google Sheets directly, so users cannot discover or request the Sheet URL from front-end source code.
 
+
+## Google Slides menu widget setup (`webmenu` + `truckmenu`)
+
+The homepage menu widget and viewer now support two slide decks:
+
+- `WEBMENU_SLIDES_URL`: web-facing menu deck (Menu + Catering)
+- `TRUCKMENU_SLIDES_URL`: TV/truck-facing deck (Menu only)
+
+Defaults now point to your supplied decks:
+
+```bash
+export WEBMENU_SLIDES_URL='https://docs.google.com/presentation/d/1aULBsFgYb6swNIG4wKCqNXem8KFyltls1ZADXu32x4M/edit?usp=sharing'
+export TRUCKMENU_SLIDES_URL='https://docs.google.com/presentation/d/1dfvtuHiPxRUNf7F9QpDW3CV6YNuQkk-5uFeJRGI2oRk/edit?usp=sharing'
+python3 scripts/build-site.py
+```
+
+For automated sheet-to-slide syncing, use the Apps Script starter in:
+- `scripts/google_apps_script_menu_sync.js`
+- `docs/google-slides-menu-sync.md`
+
 ## Deployment for secure internet exposure
 
 This project can be exposed safely to the public internet by placing a reverse proxy in front of the Flask/Gunicorn app.
