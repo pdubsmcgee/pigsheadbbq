@@ -3,16 +3,18 @@ from __future__ import annotations
 import os
 import secrets
 import time
+import json
 from io import BytesIO, StringIO
 from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
 import csv
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 from urllib.parse import urlencode
 import re
+from datetime import datetime, timezone
 
-from flask import Flask, Response, redirect, render_template_string, request, send_from_directory
+from flask import Flask, Response, jsonify, redirect, render_template_string, request, send_from_directory
 from flask_wtf.csrf import CSRFProtect, generate_csrf
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHash, VerifyMismatchError
@@ -31,6 +33,9 @@ DEFAULT_MENU_SHEET_URL = (
     "https://docs.google.com/spreadsheets/d/1dR1oA7Aox5IvtsD9qc5xaRYf-tK11IAY-8xcFkMn0LY/edit?usp=drivesdk"
 )
 DEFAULT_CATERING_SHEET_URL = DEFAULT_MENU_SHEET_URL
+
+EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+PHONE_PATTERN = re.compile(r"^[0-9+()\-\s]{7,20}$")
 
 
 @dataclass
@@ -256,6 +261,54 @@ def _download_menu_items(sheet_url: str, sheet_gid: str | None = None) -> list[M
     return menu_items
 
 
+
+
+def _normalize_phone(phone_value: str) -> str:
+    return re.sub(r"\D", "", phone_value)
+
+
+def _subscription_storage_path() -> Path:
+    configured_path = os.environ.get("SUBSCRIBE_STORAGE_PATH", str(BASE_DIR / "data" / "subscriptions.ndjson"))
+    return Path(configured_path)
+
+
+def _store_subscription_record(record: dict[str, str]) -> None:
+    destination = _subscription_storage_path()
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("a", encoding="utf-8") as output_file:
+        output_file.write(json.dumps(record, ensure_ascii=True) + "\n")
+
+
+def _forward_subscription_record(record: dict[str, str]) -> None:
+    forward_url = os.environ.get("SUBSCRIBE_FORWARD_URL", "").strip()
+    if not forward_url:
+        return
+
+    payload = json.dumps(record).encode("utf-8")
+    outgoing_request = Request(
+        forward_url,
+        data=payload,
+        headers={"Content-Type": "application/json", "Accept": "application/json"},
+        method="POST",
+    )
+    with urlopen(outgoing_request, timeout=8):
+        return
+
+
+def _validate_subscription(email: str, phone: str, consent: str) -> str | None:
+    if not EMAIL_PATTERN.match(email):
+        return "Please enter a valid email address."
+
+    if phone:
+        normalized_phone = _normalize_phone(phone)
+        if not PHONE_PATTERN.match(phone) or len(normalized_phone) < 10:
+            return "Please enter a valid phone number or leave it blank."
+
+    if consent.lower() not in {"1", "yes", "on", "true"}:
+        return "Please confirm consent before signing up."
+
+    return None
+
 def _build_menu_pdf(menu_items: list[MenuItem], menu_title: str) -> bytes:
     buffer = BytesIO()
     document = SimpleDocTemplate(
@@ -333,7 +386,7 @@ def _build_menu_pdf(menu_items: list[MenuItem], menu_title: str) -> bytes:
 def require_authentication() -> Response | None:
     path = request.path
     exempt_paths = {"/login", "/logout"}
-    if path in exempt_paths:
+    if path in exempt_paths or path.startswith("/api/"):
         return None
 
     if _authenticated_username():
@@ -409,6 +462,37 @@ def logout() -> Response:
     response = redirect("/login")
     response.delete_cookie(SESSION_COOKIE_NAME)
     return response
+
+
+
+
+@csrf.exempt
+@app.post("/api/subscribe")
+def subscribe() -> Response:
+    email = (request.form.get("email") or "").strip()
+    phone = (request.form.get("phone") or "").strip()
+    consent = (request.form.get("consent") or "").strip()
+    source_page = (request.form.get("source_page") or request.referrer or request.path).strip()
+
+    validation_error = _validate_subscription(email=email, phone=phone, consent=consent)
+    if validation_error:
+        return jsonify({"ok": False, "message": validation_error}), 400
+
+    record = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "email": email.lower(),
+        "phone": phone,
+        "consent": "yes",
+        "source_page": source_page[:300],
+    }
+
+    try:
+        _store_subscription_record(record)
+        _forward_subscription_record(record)
+    except Exception:
+        return jsonify({"ok": False, "message": "Thanks for your interest. We could not save your signup right now—please try again shortly."}), 503
+
+    return jsonify({"ok": True, "message": "Thanks for signing up! We'll keep you posted with updates."})
 
 
 @app.get("/")
