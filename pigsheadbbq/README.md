@@ -40,56 +40,39 @@ git lfs pull
 
 
 
-## GitHub Pages deployment
+## Cloudflare Pages deployment
 
-This repo now includes a GitHub Actions workflow at
-`.github/workflows/deploy-github-pages.yml` that builds and deploys the static
-site to GitHub Pages on pushes to `main`, `master`, or `work` (and manual runs).
+This repo includes a GitHub Actions workflow at
+`.github/workflows/deploy-cloudflare-pages.yml` and a `wrangler.toml`
+configuration so Cloudflare Pages can build from the generated static output.
 
 ### What it does
 
 1. Runs `python3 scripts/build-site.py` from the repository root.
-2. Publishes `site/pigsheadbbq.com` as the Pages artifact.
-3. Deploys via the official `actions/deploy-pages` action.
-
-The build script also copies the root `CNAME` file into the published directory
-and writes `.nojekyll`, so custom-domain and static asset serving behave
-consistently in GitHub Pages.
+2. Generates output under `site/pigsheadbbq.com`.
+3. Deploys that directory to Cloudflare Pages via `cloudflare/pages-action`.
 
 ### One-time GitHub setup
 
-1. Push this branch to GitHub.
-2. Open **Settings → Pages** in your repository.
-3. Under **Build and deployment**, choose **Source: GitHub Actions**.
-4. If you use a custom domain, keep the value in `CNAME` in sync with your DNS.
+Add these **Repository Secrets** under
+`Settings → Secrets and variables → Actions`:
 
-After that, every push to a configured branch deploys automatically.
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
 
-## Netlify deploy checkout error (refs/heads/main)
+Add this **Repository Variable**:
 
-If Netlify fails during **Preparing Git Reference refs/heads/main** with:
+- `CLOUDFLARE_PAGES_PROJECT_NAME` (optional, defaults to `pigsheadbbq`)
 
-- `Error checking out to refs/heads/main`
-- `Failed to prepare repo`
+### One-time Cloudflare setup
 
-that means Netlify is configured to deploy a branch named `main`, but that branch is not available to Netlify for checkout.
+1. In Cloudflare, create a Pages project (or reuse an existing one).
+2. Set the project name to match `CLOUDFLARE_PAGES_PROJECT_NAME`.
+3. If using a custom domain, configure it in **Pages → Custom domains**.
+4. If your DNS is managed outside Cloudflare, point your records to the Pages target hostname.
 
-### Fix options
-
-1. Confirm your branch names on GitHub.
-2. If needed, create and push `main`:
-
-```bash
-git checkout -b main
-git push -u origin main
-```
-
-3. If your production branch is different (for example `master`), update Netlify:
-   - **Site settings → Build & deploy → Continuous Deployment → Branch to deploy**
-4. If the branch exists and still fails, reconnect the repository in Netlify to refresh permissions:
-   - **Site settings → Build & deploy → Repository → Edit settings → Reconnect repository**
-
-Because this failure happens in repo checkout, build command changes are usually unnecessary until checkout succeeds.
+After setup, every push to `main`, `master`, or `work` (and manual workflow runs)
+deploys automatically.
 
 ## Notes
 
